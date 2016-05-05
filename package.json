@@ -1,0 +1,16 @@
+{
+  "name": "brbteam",
+  "version": "1.0.0",
+  "description": "Best online coding platform",
+  "scripts": {
+    "start": "node ./brbteam.js"
+  },
+  "author": "Nenad Palinkasevic",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.0.6",
+    "gulp-util": "^3.0.7"
+  }
+}
