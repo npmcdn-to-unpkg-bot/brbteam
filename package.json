@@ -18,6 +18,7 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
     "mongoose": "^4.4.15",
+    "nools": "^0.4.1",
     "passport": "^0.3.2"
   },
   "devDependencies": {
