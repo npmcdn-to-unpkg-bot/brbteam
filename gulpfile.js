@@ -5,15 +5,11 @@ var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 
 gulp.task('start', function () {
-  nodemon({
-    script: 'brbteam.js'
-  , ext: 'js html'
-  , env: { 'NODE_ENV': 'development' }
-  })
+
 })
 
 gulp.task('default', function() {
-	return gulp.src('client/js/**/*.js')
+	return gulp.src('client/app/**/*.js')
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 			presets: ['es2015']

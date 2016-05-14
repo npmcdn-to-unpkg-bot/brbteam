@@ -1,14 +1,58 @@
 <div class="wrapper wrapper-content animated fadeInRight">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="text-center m-t-lg">
-                <h1>
-                    {{main.helloText}}
-                </h1>
-                <small>
-                    {{main.descriptionText}}
-                </small>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content text-center p-md">
+
+                            <h2><span class="text-navy">BrbTeam - Coding interviews made easy</span></h2>
+                            <p>
+                              Joing an existing interview room or create your own
+                            </p>
+
+
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content text-center p-md">
+
+                            <h4 class="m-b-xxs">Create a new interview room </h4>
+                            <p>Choose a unique name you can share with people</p>
+
+                           <form role="form">
+                               <div class="form-group"> <input type="text"
+                                                                                      placeholder="Room name"
+                                                                                      class="form-control"></div>
+                               <div>
+                                  <label> <input icheck type="checkbox" ng-model="main.unCheck"> Private </label>
+                                   <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit">
+                                     <strong>Create
+                                       </strong></button>
+
+                               </div>
+                           </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content text-center p-md">
+
+                            <h4 class="m-b-xxs">Search for available rooms </h4>
+                            <p>You can find only public rooms</p>
+                          
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
         </div>
-    </div>
-</div>
