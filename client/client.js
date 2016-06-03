@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * INSPINIA - Responsive Admin Theme
- *
- */
 (function () {
     angular.module('inspinia', ['ui.router', // Routing
     'oc.lazyLoad', // ocLazyLoad
@@ -11,14 +7,6 @@
 })();
 "use strict";
 
-/**
- * INSPINIA - Responsive Admin Theme
- *
- * Inspinia theme use AngularUI Router to manage routing and views
- * Each view are defined as state.
- * Initial there are written state for all view in theme.
- *
- */
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
     $urlRouterProvider.otherwise("/index/main");
 
@@ -35,8 +23,20 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         url: "/main",
         templateUrl: "views/main.html",
         data: { pageTitle: 'Example view' }
-    }).state('index.minor', {
-        url: "/minor",
+    }).state('index.calendar', {
+        url: "/calendar",
+        templateUrl: "views/minor.html",
+        data: { pageTitle: 'Example view' }
+    }).state('index.questions', {
+        url: "/questions",
+        templateUrl: "views/minor.html",
+        data: { pageTitle: 'Example view' }
+    }).state('index.myroom', {
+        url: "/myroom",
+        templateUrl: "app/interviewRoom/code_editor.html",
+        data: { pageTitle: 'Interview room' }
+    }).state('index.settings', {
+        url: "/settings",
         templateUrl: "views/minor.html",
         data: { pageTitle: 'Example view' }
     });
@@ -281,5 +281,6 @@ $(function () {
         }
     });
 });
+"use strict";
 "use strict";
 //# sourceMappingURL=client.js.map

@@ -19,7 +19,8 @@
     "gulp-util": "^3.0.7",
     "mongoose": "^4.4.15",
     "nools": "^0.4.1",
-    "passport": "^0.3.2"
+    "passport": "^0.3.2",
+    "socket.io": "^1.4.6"
   },
   "devDependencies": {
     "gulp-babel": "^6.1.2"
