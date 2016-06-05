@@ -47,6 +47,26 @@ angular.module('inspinia').config(config).run(function ($rootScope, $state) {
 });
 'use strict';
 
+(function () {
+
+  angular.module('inspinia').service('ResourceService', ResourceService);
+
+  function ResourceService($http) {
+
+    var questionApiUrl = "http://localhost:4000/api";
+
+    // Questions
+    var addQuestion = function addQuestion(data) {
+      return $http.post(questionApiUrl + '/question/new', data);
+    };
+
+    return {
+      addQuestion: addQuestion
+    };
+  }
+})();
+'use strict';
+
 /**
  * INSPINIA - Responsive Admin Theme
  *
@@ -287,17 +307,29 @@ $(function () {
 
 (function () {
 
-    angular.module('inspinia').controller('QuestionsController', QuestionsController);
+  angular.module('inspinia').controller('QuestionsController', QuestionsController);
 
-    //todo user ngInject
+  //todo user ngInject
 
-    function QuestionsController($scope, $http) {
+  function QuestionsController($scope, $http, ResourceService) {
 
-        $scope.title = "Find the right questions to ask";
+    $scope.title = "Find the right questions to ask";
 
-        $scope.question = {};
+    $scope.form = {};
 
-        $scope.addQuestion = function () {};
-    }
+    $scope.addQuestion = function () {
+      console.log($scope.form.question);
+      console.log($scope.form.tag);
+
+      $scope.form.tags = [];
+      $scope.form.tags.push($scope.form.tag);
+
+      ResourceService.addQuestion($scope.form).success(function (response) {
+        console.log(response);
+      }).error(function (response) {
+        console.log("Error while adding a new question");
+      });
+    };
+  }
 })();
 //# sourceMappingURL=client.js.map
