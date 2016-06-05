@@ -11,31 +11,32 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('index', {
             abstract: true,
             url: "/index",
-            templateUrl: "views/common/content.html",
+            templateUrl: "app/theme/views/common/content.html",
         })
         .state('index.main', {
             url: "/main",
-            templateUrl: "views/main.html",
+            templateUrl: "app/theme/views/main.html",
             data: { pageTitle: 'Example view' }
         })
         .state('index.calendar', {
             url: "/calendar",
-            templateUrl: "views/minor.html",
+            templateUrl: "theme/views/minor.html",
             data: { pageTitle: 'Example view' }
         })
         .state('index.questions', {
           url: "/questions",
-          templateUrl: "views/minor.html",
+          templateUrl: "app/main/questions/questions.html",
+          controller: 'QuestionsController',
           data: { pageTitle: 'Example view' }
         })
         .state('index.myroom', {
           url: "/myroom",
-          templateUrl: "app/interviewRoom/code_editor.html",
+          templateUrl: "app/main/interviewRoom/code_editor.html",
           data: { pageTitle: 'Interview room' }
         })
         .state('index.settings', {
           url: "/settings",
-          templateUrl: "views/minor.html",
+          templateUrl: "app/theme/views/minor.html",
           data: { pageTitle: 'Example view' }
         });
 
