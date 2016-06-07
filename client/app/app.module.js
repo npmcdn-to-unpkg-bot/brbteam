@@ -5,25 +5,24 @@
 
     // Global modules
     'app.core',
-    
 
     // Appointements
-    'app.appointments',
+    //'app.appointments',
 
     // Authentication
-    'app.auth',
+    //'app.auth',
 
     // Interview Room
-    'app.interviewRoom',
+    //'app.interviewRoom',
 
     // Lobby
-    'app.lobby',
+    //'app.lobby',
 
     // Questions
-    'app.questions',
+    //'app.questions'
 
     // Settings
-    'app.settings'
+    //'app.settings'
 
   ]);
 

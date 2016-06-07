@@ -1,13 +1,15 @@
 (() => {
 
-  angular.module('inspinia')
+  angular.module('app.questions')
          .controller('QuestionsController', QuestionsController);
 
   //todo user ngInject
 
   function QuestionsController($scope, $http, ResourceService) {
 
-      $scope.title = "Find the right questions to ask";
+      let vm = this;
+
+      vm.title = "Find the right questions to ask";
 
       $scope.form = {};
 

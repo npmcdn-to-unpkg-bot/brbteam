@@ -1,6 +1,6 @@
 (() => {
 
-  angular.module('inspinia')
+  angular.module('app.core')
          .service('ResourceService', ResourceService);
 
 

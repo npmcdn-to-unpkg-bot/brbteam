@@ -1,55 +1,48 @@
 'use strict';
 
 (function () {
-    angular.module('inspinia', ['ui.router', // Routing
-    'oc.lazyLoad', // ocLazyLoad
-    'ui.bootstrap']);
+  'use strict';
+
+  angular.module('app', [
+
+  // Global modules
+  'app.core']);
 })();
-"use strict";
+'use strict';
 
-function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
-    $urlRouterProvider.otherwise("/index/main");
+(function () {
+  angular.module('app').config(config);
 
-    $ocLazyLoadProvider.config({
-        // Set to true if you want to see what and when is dynamically loaded
-        debug: false
-    });
+  function config($stateProvider) {
+    'use strict';
 
-    $stateProvider.state('index', {
-        abstract: true,
-        url: "/index",
-        templateUrl: "app/theme/views/common/content.html"
-    }).state('index.main', {
-        url: "/main",
-        templateUrl: "app/theme/views/main.html",
-        data: { pageTitle: 'Example view' }
-    }).state('index.calendar', {
-        url: "/calendar",
-        templateUrl: "theme/views/minor.html",
-        data: { pageTitle: 'Example view' }
-    }).state('index.questions', {
-        url: "/questions",
-        templateUrl: "app/main/questions/questions.html",
-        controller: 'QuestionsController',
-        data: { pageTitle: 'Example view' }
-    }).state('index.myroom', {
-        url: "/myroom",
-        templateUrl: "app/main/interviewRoom/code_editor.html",
-        data: { pageTitle: 'Interview room' }
-    }).state('index.settings', {
-        url: "/settings",
-        templateUrl: "app/theme/views/minor.html",
-        data: { pageTitle: 'Example view' }
-    });
-}
-angular.module('inspinia').config(config).run(function ($rootScope, $state) {
-    $rootScope.$state = $state;
-});
+    (function () {
+      'use strict';
+
+      angular.module('app.questions', ['app.core']).config(config);
+
+      function config($stateProvider) {
+
+        $stateProvider.state('index.main', {
+          url: "/",
+          templateUrl: "app/main/questions/questions.html"
+        });
+      }
+    })();
+  }
+})();
+'use strict';
+
+(function () {
+  'use strict';
+
+  angular.module('app.core', ['ui.router', 'oc.lazyLoad', 'ui.bootstrap']);
+})();
 'use strict';
 
 (function () {
 
-  angular.module('inspinia').service('ResourceService', ResourceService);
+  angular.module('app.core').service('ResourceService', ResourceService);
 
   function ResourceService($http) {
 
@@ -82,7 +75,7 @@ function MainCtrl() {
   this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.';
 };
 
-angular.module('inspinia').controller('MainCtrl', MainCtrl);
+angular.module('app.core').controller('MainCtrl', MainCtrl);
 'use strict';
 
 /**
@@ -235,7 +228,7 @@ function minimalizaSidebar($timeout) {
  *
  * Pass all functions into module
  */
-angular.module('inspinia').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('iboxToolsFullScreen', iboxToolsFullScreen);
+angular.module('app.core').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('iboxToolsFullScreen', iboxToolsFullScreen);
 "use strict";
 
 /**
@@ -307,13 +300,15 @@ $(function () {
 
 (function () {
 
-  angular.module('inspinia').controller('QuestionsController', QuestionsController);
+  angular.module('app.questions').controller('QuestionsController', QuestionsController);
 
   //todo user ngInject
 
   function QuestionsController($scope, $http, ResourceService) {
 
-    $scope.title = "Find the right questions to ask";
+    var vm = this;
+
+    vm.title = "Find the right questions to ask";
 
     $scope.form = {};
 
@@ -330,6 +325,23 @@ $(function () {
         console.log("Error while adding a new question");
       });
     };
+  }
+})();
+'use strict';
+
+(function () {
+  'use strict';
+
+  angular.module('app.questions', ['app.core']).config(config);
+
+  function config($stateProvider) {
+
+    $stateProvider.state('index.questions', {
+      url: "/questions",
+      templateUrl: "app/main/questions/questions.html",
+      controller: 'QuestionsController',
+      controllerAs: 'vm'
+    });
   }
 })();
 //# sourceMappingURL=client.js.map
