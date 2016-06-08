@@ -13,8 +13,14 @@
       return $http.post(questionApiUrl + '/question/new', data);
     }
 
+    let searchQuestion = (data) => {
+      console.log(data);
+      return $http.post(questionApiUrl + '/questions', data);
+    }
+
     return {
-      addQuestion : addQuestion
+      addQuestion : addQuestion,
+      searchQuestion : searchQuestion
     }
 
   }

@@ -5,27 +5,49 @@
 
   //todo user ngInject
 
-  function QuestionsController($scope, $http, ResourceService) {
+  function QuestionsController($http, ResourceService) {
 
-      $scope.title = "Find the right questions to ask";
+      let vm = this;
 
-      $scope.form = {};
+      // Functions
+      vm.addQuestion = addQuestion;
+      vm.searchQuestion = searchQuestion;
 
-      $scope.addQuestion = () => {
-        console.log($scope.form.question);
-        console.log($scope.form.tag);
+      // Data
+      vm.title = "Find the right questions to ask";
+      vm.form = {};
+      vm.search = {};
 
-        $scope.form.tags = [];
-        $scope.form.tags.push($scope.form.tag);
+      function addQuestion() {
+        console.log(vm.form.question);
+        console.log(vm.form.tag);
 
-        ResourceService.addQuestion($scope.form)
-        .success((response) =>{
+        vm.form.tags = [];
+        vm.form.tags.push(vm.form.tag);
+
+        ResourceService.addQuestion(vm.form)
+        .success((response) => {
           console.log(response);
         })
         .error((response) => {
           console.log("Error while adding a new question");
         });
       }
+
+      function searchQuestion() {
+        console.log(vm.search.tags);
+
+        ResourceService.searchQuestion(vm.search)
+        .success((response) => {
+          console.log(response);
+        })
+        .error((response) => {
+          console.log("Error while searching questions");
+        });
+
+      }
+
+
   }
 
 })();

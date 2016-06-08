@@ -1,8 +1,9 @@
 define Questions {
-  text: '',
+  matchedQuestions: [],
   tags: [],
-  constructor: function(tags) {
+  constructor: function(tags, matchedQuestions) {
     this.tags = tags;
+    this.matchedQuestions = matchedQuestions;
   }
 }
 
@@ -13,7 +14,7 @@ rule Rule1 {
   }
 
   then {
-    console.log("How does mongodb handle large binary files?");
+    out.matchedQuestions.push("How does mongodb handle large binary files?");
   }
 }
 
@@ -25,5 +26,16 @@ rule Rule2 {
 
   then {
     console.log("Explain what an event loop is?");
+  }
+}
+
+rule Rule3 {
+  when {
+    out: Questions "mongo" in out.tags || "db" in out.tags;
+
+  }
+
+  then {
+    out.matchedQuestions.push("How would you search a file by date in mongodb?");
   }
 }

@@ -1,14 +1,41 @@
 (() => {
-  var nools = require('nools');
+  let nools = require('nools');
 
-  var ruleFilePath = __dirname + "/questions.nools";
+  class QuestionsResonator {
 
-  var flow = nools.compile(ruleFilePath);
-  var session = flow.getSession();
+    constructor() {
+      this.ruleFilePath = __dirname + "/questions.nools";
+      this.flow = nools.compile(this.ruleFilePath);
+      this.session = this.flow.getSession();
+      this.Questions = this.flow.getDefined('Questions');
+    }
 
-  var Questions = flow.getDefined('Questions');
-  session.assert(new Questions(["nodejs"]));
-  session.assert(new Questions(["mongo", "db"]));
+    addQuestions(question, tags) {
 
-  session.match();
+    }
+
+    getQuestions(tags) {
+
+      let questions = [];
+      let currQuestion = new this.Questions(tags, questions);
+
+      this.session.assert(currQuestion);
+
+      this.session.match((err) => {
+        if(err) {
+          console.log(err.stack);
+        } else {
+          console.log(questions);
+          return questions;
+        }
+      });
+    }
+
+    
+
+
+  }
+
+  module.exports = new QuestionsResonator;
+
 })();

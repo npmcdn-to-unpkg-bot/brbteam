@@ -5,6 +5,34 @@
     'oc.lazyLoad', // ocLazyLoad
     'ui.bootstrap']);
 })();
+'use strict';
+
+(function () {
+  'use strict';
+
+  angular.module('app', [
+
+  // Global modules
+  'app.core',
+
+  // Appointements
+  'app.appointments',
+
+  // Authentication
+  'app.auth',
+
+  // Interview Room
+  'app.interviewRoom',
+
+  // Lobby
+  'app.lobby',
+
+  // Questions
+  'app.questions',
+
+  // Settings
+  'app.settings']);
+})();
 "use strict";
 
 function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
@@ -31,6 +59,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         url: "/questions",
         templateUrl: "app/main/questions/questions.html",
         controller: 'QuestionsController',
+        controllerAs: 'vm',
         data: { pageTitle: 'Example view' }
     }).state('index.myroom', {
         url: "/myroom",
@@ -48,6 +77,15 @@ angular.module('inspinia').config(config).run(function ($rootScope, $state) {
 'use strict';
 
 (function () {
+  'use strict';
+
+  angular.module('app.core', ['ui.router', // Routing
+  'oc.lazyLoad', // ocLazyLoad
+  'ui.bootstrap']);
+})();
+'use strict';
+
+(function () {
 
   angular.module('inspinia').service('ResourceService', ResourceService);
 
@@ -60,8 +98,14 @@ angular.module('inspinia').config(config).run(function ($rootScope, $state) {
       return $http.post(questionApiUrl + '/question/new', data);
     };
 
+    var searchQuestion = function searchQuestion(data) {
+      console.log(data);
+      return $http.post(questionApiUrl + '/questions', data);
+    };
+
     return {
-      addQuestion: addQuestion
+      addQuestion: addQuestion,
+      searchQuestion: searchQuestion
     };
   }
 })();
@@ -311,25 +355,59 @@ $(function () {
 
   //todo user ngInject
 
-  function QuestionsController($scope, $http, ResourceService) {
+  function QuestionsController($http, ResourceService) {
 
-    $scope.title = "Find the right questions to ask";
+    var vm = this;
 
-    $scope.form = {};
+    // Functions
+    vm.addQuestion = addQuestion;
+    vm.searchQuestion = searchQuestion;
 
-    $scope.addQuestion = function () {
-      console.log($scope.form.question);
-      console.log($scope.form.tag);
+    // Data
+    vm.title = "Find the right questions to ask";
+    vm.form = {};
+    vm.search = {};
 
-      $scope.form.tags = [];
-      $scope.form.tags.push($scope.form.tag);
+    function addQuestion() {
+      console.log(vm.form.question);
+      console.log(vm.form.tag);
 
-      ResourceService.addQuestion($scope.form).success(function (response) {
+      vm.form.tags = [];
+      vm.form.tags.push(vm.form.tag);
+
+      ResourceService.addQuestion(vm.form).success(function (response) {
         console.log(response);
       }).error(function (response) {
         console.log("Error while adding a new question");
       });
-    };
+    }
+
+    function searchQuestion() {
+      console.log(vm.search.tags);
+
+      ResourceService.searchQuestion(vm.search).success(function (response) {
+        console.log(response);
+      }).error(function (response) {
+        console.log("Error while searching questions");
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
+  'use strict';
+
+  angular.module('app.questions', ['app.core']).config(config);
+
+  function config($stateProvider) {
+
+    $stateProvider.state('index.questions', {
+      url: "/questions",
+      templateUrl: "app/main/questions/questions.html",
+      controller: 'QuestionsController',
+      controllerAs: 'vm'
+    });
   }
 })();
 //# sourceMappingURL=client.js.map

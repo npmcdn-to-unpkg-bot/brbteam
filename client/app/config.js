@@ -27,6 +27,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
           url: "/questions",
           templateUrl: "app/main/questions/questions.html",
           controller: 'QuestionsController',
+          controllerAs: 'vm',
           data: { pageTitle: 'Example view' }
         })
         .state('index.myroom', {
