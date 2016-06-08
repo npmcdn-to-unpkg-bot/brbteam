@@ -386,7 +386,7 @@ $(function () {
       console.log(vm.search.tags);
 
       ResourceService.searchQuestion(vm.search).success(function (response) {
-        console.log(response);
+        vm.foundQuestions = response;
       }).error(function (response) {
         console.log("Error while searching questions");
       });

@@ -22,7 +22,7 @@
 
     let tagArr = tags.split(' ');
 
-    questions.getQuestions(tagArr);
+    questions.getQuestions(tagArr, req, res);
 
   });
 

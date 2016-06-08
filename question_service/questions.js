@@ -14,7 +14,7 @@
 
     }
 
-    getQuestions(tags) {
+    getQuestions(tags, req, res) {
 
       let questions = [];
       let currQuestion = new this.Questions(tags, questions);
@@ -25,13 +25,13 @@
         if(err) {
           console.log(err.stack);
         } else {
-          console.log(questions);
-          return questions;
+          res.status(200);
+          res.json(questions);
         }
       });
     }
 
-    
+
 
 
   }

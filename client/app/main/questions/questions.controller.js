@@ -39,7 +39,7 @@
 
         ResourceService.searchQuestion(vm.search)
         .success((response) => {
-          console.log(response);
+          vm.foundQuestions = response;
         })
         .error((response) => {
           console.log("Error while searching questions");
