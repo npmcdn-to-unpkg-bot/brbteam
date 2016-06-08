@@ -377,6 +377,8 @@ $(function () {
 
       ResourceService.addQuestion(vm.form).success(function (response) {
         console.log(response);
+        vm.form.tag = "";
+        vm.form.question = "";
       }).error(function (response) {
         console.log("Error while adding a new question");
       });

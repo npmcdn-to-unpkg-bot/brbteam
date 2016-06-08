@@ -12,8 +12,8 @@
 
   router.post('/question/new', (req, res) => {
     //get json from frontend and push a new question with the
+    questions.addQuestions(req.body.question, req.body.tags);
     res.send("added a new question");
-    console.log(req.body);
 
   });
 

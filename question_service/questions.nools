@@ -39,3 +39,15 @@ rule Rule3 {
     out.matchedQuestions.push("How would you search a file by date in mongodb?");
   }
 }
+
+ 
+
+ rule RuleHk9Ho1IE { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('Zasto je milan glup?');}}
+
+ rule RulerJ7KsyL4 { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('Koliko je mali?');}}
+
+ rule RuleHk6ti1UV { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('Koliko mu je mali?');}}
+
+ rule RuleByc9iJLN { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('Zasto mu je jako mali?');}}
+
+ rule RuleSyF2s1U4 { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('beso > milana ?');}}
