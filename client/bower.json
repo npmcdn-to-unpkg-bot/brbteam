@@ -12,5 +12,8 @@
     "test",
     "tests"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "socket.io": "^1.4.6",
+    "angular-ui-codemirror": "^0.3.0"
+  }
 }

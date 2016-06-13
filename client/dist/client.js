@@ -3,35 +3,8 @@
 (function () {
     angular.module('inspinia', ['ui.router', // Routing
     'oc.lazyLoad', // ocLazyLoad
-    'ui.bootstrap']);
-})();
-'use strict';
-
-(function () {
-  'use strict';
-
-  angular.module('app', [
-
-  // Global modules
-  'app.core',
-
-  // Appointements
-  'app.appointments',
-
-  // Authentication
-  'app.auth',
-
-  // Interview Room
-  'app.interviewRoom',
-
-  // Lobby
-  'app.lobby',
-
-  // Questions
-  'app.questions',
-
-  // Settings
-  'app.settings']);
+    'ui.bootstrap', // Ui Bootstrap
+    'ui.codemirror']);
 })();
 "use strict";
 
@@ -64,6 +37,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
     }).state('index.myroom', {
         url: "/myroom",
         templateUrl: "app/main/interviewRoom/code_editor.html",
+        controller: 'InterviewController',
+        controllerAs: 'vm',
         data: { pageTitle: 'Interview room' }
     }).state('index.settings', {
         url: "/settings",
@@ -346,7 +321,44 @@ $(function () {
         }
     });
 });
-"use strict";
+'use strict';
+
+(function () {
+
+  angular.module('inspinia').controller('InterviewController', InterviewController);
+
+  function InterviewController($scope) {
+
+    var vm = this;
+
+    vm.hi = "HI";
+    // data
+    vm.editorOptions = {
+      lineNumbers: true,
+      theme: 'twilight',
+      lineWrapping: true,
+      mode: 'javascript'
+    };
+
+    vm.currentCode = "";
+
+    vm.change = function () {
+      console.log(vm.currentCode);
+    };
+
+    // functions
+    //  vm.codemirrorLoaded = codemirrorLoaded;
+
+    // function codemirrorLoaded() {
+    //   let doc = _editor.getDoc();
+    //
+    //
+    //   _editor.on("change", () => {
+    //     console.log(doc);
+    //   });
+    // }
+  }
+})();
 'use strict';
 
 (function () {

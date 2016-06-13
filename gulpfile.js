@@ -3,10 +3,24 @@ var gutil = require('gulp-util');
 var babel = require('gulp-babel');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
+var inject = require('gulp-inject');
+var mainBowerFiles = require('gulp-main-bower-files');
 
 gulp.task('start', function () {
 
-})
+});
+
+gulp.task('inject', function() {
+	var target = gulp.src('client/index.html');
+
+	//var sources = gulp.src(mainBowerFiles(), {read: false});
+
+	// console.log(sources);
+	//
+	// return target.pipe(inject(sources))
+	// 						 .pipe(gulp.dest('client/'));
+
+});
 
 gulp.task('default', function() {
 	return gulp.src('client/app/**/*.js')

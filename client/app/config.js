@@ -33,6 +33,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         .state('index.myroom', {
           url: "/myroom",
           templateUrl: "app/main/interviewRoom/code_editor.html",
+          controller: 'InterviewController',
+          controllerAs: 'vm',
           data: { pageTitle: 'Interview room' }
         })
         .state('index.settings', {
