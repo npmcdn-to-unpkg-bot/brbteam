@@ -16,12 +16,10 @@ const roomCtrl = require('./controllers/room.controller');
 require('./models/message.model');
 const messageCtrl = require('./controllers/message.controller');
 
-router.get('/hi', function(req, res) {
-  res.send("Hi you hit the api");
-});
-
 router.get('/addUser', userCtrl.addUser);
 router.post('/user/signup', authCtrl.signUp);
 router.post('/user/login', authCtrl.login);
+
+router.post('/room/new', roomCtrl.addRoom);
 
 module.exports = router;

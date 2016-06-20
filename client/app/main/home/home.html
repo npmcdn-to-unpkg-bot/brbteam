@@ -23,12 +23,11 @@
                             <p>Choose a unique name you can share with people</p>
 
                            <form role="form">
-                               <div class="form-group"> <input type="text"
-                                                                                      placeholder="Room name"
-                                                                                      class="form-control"></div>
+                               <div class="form-group">
+                                 <input type="text" placeholder="Room name" ng-model="vm.room.name" class="form-control"></div>
                                <div>
-                                  <label> <input icheck type="checkbox" ng-model="main.unCheck"> Private </label>
-                                   <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit">
+                                  <label> <input icheck type="checkbox" ng-model="vm.room.privateRoom"> Private </label>
+                                   <button class="btn btn-sm btn-primary pull-right m-t-n-xs" ng-click="vm.addRoom()" type="submit">
                                      <strong>Create
                                        </strong></button>
 

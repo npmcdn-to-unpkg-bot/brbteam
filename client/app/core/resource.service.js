@@ -16,13 +16,20 @@
     }
 
     let searchQuestion = (data) => {
-      console.log(data);
       return $http.post(questionApiUrl + '/questions', data);
     }
 
+    let addRoom = (data) => {
+      return $http.post('/api/room/new', data);
+    }
+
     return {
+      // Questions
       addQuestion : addQuestion,
-      searchQuestion : searchQuestion
+      searchQuestion : searchQuestion,
+
+      // Rooms
+      addRoom : addRoom
     }
 
   }

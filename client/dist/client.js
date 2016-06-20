@@ -135,13 +135,20 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
     };
 
     var searchQuestion = function searchQuestion(data) {
-      console.log(data);
       return $http.post(questionApiUrl + '/questions', data);
     };
 
+    var addRoom = function addRoom(data) {
+      return $http.post('/api/room/new', data);
+    };
+
     return {
+      // Questions
       addQuestion: addQuestion,
-      searchQuestion: searchQuestion
+      searchQuestion: searchQuestion,
+
+      // Rooms
+      addRoom: addRoom
     };
   }
 })();
@@ -157,16 +164,6 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
     return socketFactory();
   }
 })();
-'use strict';
-
-function MainCtrl() {
-
-    this.userName = 'Example user';
-    this.helloText = 'Welcome in SeedProject';
-    this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.';
-};
-
-angular.module('brbteam').controller('MainCtrl', MainCtrl);
 'use strict';
 
 /**
@@ -404,6 +401,28 @@ $(function () {
 
 (function () {
 
+  angular.module('brbteam').controller('MainController', MainController);
+
+  MainController.$inject = ['AuthService'];
+
+  function MainController(AuthService) {
+    var vm = this;
+
+    // Data
+    vm.userName = AuthService.currentUser().username;
+
+    // Functions
+    vm.logout = logout;
+
+    function logout() {
+      AuthService.logout();
+    }
+  }
+})();
+'use strict';
+
+(function () {
+
   angular.module('brbteam').controller('AuthController', AuthController);
 
   AuthController.$inject = ['AuthService', '$log'];
@@ -446,9 +465,28 @@ $(function () {
 (function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
-  HomeController.$inject = [];
+  HomeController.$inject = ['ResourceService', '$log', '$state'];
 
-  function HomeController() {}
+  function HomeController(ResourceService, $log, $state) {
+    var vm = this;
+
+    // Data
+    vm.room = {};
+
+    // Functions
+    vm.addRoom = addRoom;
+
+    function addRoom() {
+
+      ResourceService.addRoom(vm.room).success(function (response) {
+        $log.info(response);
+        vm.room = {};
+        $state.go('index.myroom');
+      }).error(function (response) {
+        $log.info(response);
+      });
+    }
+  }
 })();
 'use strict';
 
