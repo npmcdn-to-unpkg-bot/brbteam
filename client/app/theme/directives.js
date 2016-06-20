@@ -148,6 +148,21 @@ function minimalizaSidebar($timeout) {
 }
 
 
+function chatSlimScroll($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element) {
+            $timeout(function(){
+                element.slimscroll({
+                    height: '234px',
+                    railOpacity: 0.4
+                });
+
+            });
+        }
+    };
+}
+
 /**
  *
  * Pass all functions into module
@@ -158,4 +173,5 @@ angular
     .directive('sideNavigation', sideNavigation)
     .directive('iboxTools', iboxTools)
     .directive('minimalizaSidebar', minimalizaSidebar)
+    .directive('chatSlimScroll', chatSlimScroll)
     .directive('iboxToolsFullScreen', iboxToolsFullScreen);

@@ -32,8 +32,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         templateUrl: "app/main/auth/register.html"
     }).state('index.main', {
         url: "/main",
-        templateUrl: "app/theme/views/main.html",
-        data: { pageTitle: 'Example view' }
+        templateUrl: "app/main/home/home.html",
+        controller: 'HomeController',
+        controllerAs: 'vm'
     }).state('index.calendar', {
         url: "/calendar",
         templateUrl: "theme/views/minor.html",
@@ -52,8 +53,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         data: { pageTitle: 'Interview room' }
     }).state('index.settings', {
         url: "/settings",
-        templateUrl: "app/theme/views/minor.html",
-        data: { pageTitle: 'Example view' }
+        templateUrl: "app/main/settings/settings.html"
     });
 }
 angular.module('brbteam').config(config).run(function ($rootScope, $state) {
@@ -315,11 +315,25 @@ function minimalizaSidebar($timeout) {
     };
 }
 
+function chatSlimScroll($timeout) {
+    return {
+        restrict: 'A',
+        link: function link(scope, element) {
+            $timeout(function () {
+                element.slimscroll({
+                    height: '234px',
+                    railOpacity: 0.4
+                });
+            });
+        }
+    };
+}
+
 /**
  *
  * Pass all functions into module
  */
-angular.module('brbteam').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('iboxToolsFullScreen', iboxToolsFullScreen);
+angular.module('brbteam').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('chatSlimScroll', chatSlimScroll).directive('iboxToolsFullScreen', iboxToolsFullScreen);
 "use strict";
 
 /**
@@ -426,6 +440,15 @@ $(function () {
       });
     }
   }
+})();
+'use strict';
+
+(function () {
+  angular.module('brbteam').controller('HomeController', HomeController);
+
+  HomeController.$inject = [];
+
+  function HomeController() {}
 })();
 'use strict';
 

@@ -27,8 +27,9 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('index.main', {
             url: "/main",
-            templateUrl: "app/theme/views/main.html",
-            data: { pageTitle: 'Example view' }
+            templateUrl: "app/main/home/home.html",
+            controller: 'HomeController',
+            controllerAs: 'vm',
         })
         .state('index.calendar', {
             url: "/calendar",
@@ -51,8 +52,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('index.settings', {
           url: "/settings",
-          templateUrl: "app/theme/views/minor.html",
-          data: { pageTitle: 'Example view' }
+          templateUrl: "app/main/settings/settings.html",
         });
 
 }
