@@ -1,6 +1,6 @@
 (() => {
 
-  angular.module('inspinia')
+  angular.module('brbteam')
          .service('ResourceService', ResourceService);
 
 

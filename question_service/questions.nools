@@ -51,3 +51,7 @@ rule Rule3 {
  rule RuleByc9iJLN { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('Zasto mu je jako mali?');}}
 
  rule RuleSyF2s1U4 { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('beso > milana ?');}}
+
+ rule RuleryHsOEyB { when {out: Questions 'milan' in out.tags}then {out.matchedQuestions.push('milan picka?');}}
+
+ rule RuleHJt7KVJH { when {out: Questions 'cxcxv' in out.tags}then {out.matchedQuestions.push('zfzx');}}

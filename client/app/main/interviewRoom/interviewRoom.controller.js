@@ -1,6 +1,6 @@
 (() => {
 
-  angular.module('inspinia')
+  angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
   function InterviewController($scope) {

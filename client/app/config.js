@@ -13,6 +13,18 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
             url: "/index",
             templateUrl: "app/theme/views/common/content.html",
         })
+        .state('login', {
+            url: "/login",
+            controller: 'AuthController',
+            controllerAs: 'vm',
+            templateUrl: "app/main/auth/login.html"
+        })
+        .state('register', {
+            url: "/register",
+            controller: 'AuthController',
+            controllerAs: 'vm',
+            templateUrl: "app/main/auth/register.html"
+        })
         .state('index.main', {
             url: "/main",
             templateUrl: "app/theme/views/main.html",
@@ -45,7 +57,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
 
 }
 angular
-    .module('inspinia')
+    .module('brbteam')
     .config(config)
     .run(function($rootScope, $state) {
         $rootScope.$state = $state;

@@ -1,27 +1,30 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+(() => {
+  require('dotenv').load();
 
-import router from "./server/routes.js";
+  let express = require('express');
+  let app = express();
+  let bodyParser = require('body-parser');
+  let mongoose = require('mongoose');
+  let db = require('./server/config/db.js');
+  let jwt = require('jwt-simple');
 
-let port = process.env.PORT || 9000;
+  let router = require("./server/routes.js");
 
-//set up the database
-mongoose.connect("mongodb://localhost/brbteam");
+  let passport = require('passport');
+  require('./server/config/passport.js')(passport);
 
-mongoose.connection.on('connected', () => {
-  console.log("Connected to local brbteam database");
-});
+  let port = process.env.PORT || 9000;
 
-//include the client side
-app.use(express.static('client'));
+  //include the client side
+  app.use(express.static('client'));
 
-app.use(bodyParser.urlencoded({extended : true}));
-app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended : true}));
+  app.use(bodyParser.json());
 
-app.use('/api', router);
+  app.use('/api', router);
 
-app.listen(port, function() {
-  console.log("App is listening on port " + port);
-});
+  app.listen(port, function() {
+    console.log("App is listening on port " + port);
+  });
+
+})()

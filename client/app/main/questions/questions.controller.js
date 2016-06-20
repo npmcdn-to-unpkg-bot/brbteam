@@ -1,6 +1,6 @@
 (() => {
 
-  angular.module('inspinia')
+  angular.module('brbteam')
          .controller('QuestionsController', QuestionsController);
 
   //todo user ngInject

@@ -1,10 +1,10 @@
 'use strict';
 
 (function () {
-    angular.module('inspinia', ['ui.router', // Routing
+    angular.module('brbteam', ['ui.router', // Routing
     'oc.lazyLoad', // ocLazyLoad
     'ui.bootstrap', // Ui Bootstrap
-    'ui.codemirror']);
+    'ui.codemirror', 'angular-jwt', 'ngStorage']);
 })();
 "use strict";
 
@@ -20,6 +20,16 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         abstract: true,
         url: "/index",
         templateUrl: "app/theme/views/common/content.html"
+    }).state('login', {
+        url: "/login",
+        controller: 'AuthController',
+        controllerAs: 'vm',
+        templateUrl: "app/main/auth/login.html"
+    }).state('register', {
+        url: "/register",
+        controller: 'AuthController',
+        controllerAs: 'vm',
+        templateUrl: "app/main/auth/register.html"
     }).state('index.main', {
         url: "/main",
         templateUrl: "app/theme/views/main.html",
@@ -46,23 +56,70 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         data: { pageTitle: 'Example view' }
     });
 }
-angular.module('inspinia').config(config).run(function ($rootScope, $state) {
+angular.module('brbteam').config(config).run(function ($rootScope, $state) {
     $rootScope.$state = $state;
 });
 'use strict';
 
 (function () {
-  'use strict';
 
-  angular.module('app.core', ['ui.router', // Routing
-  'oc.lazyLoad', // ocLazyLoad
-  'ui.bootstrap']);
+  angular.module('brbteam').service('AuthService', AuthService);
+
+  function AuthService($http, $log, jwtHelper, $state, $localStorage) {
+
+    function login(data, callback) {
+      $http.post('/api/user/login', data).success(function (response) {
+        if (response.token) {
+          var currentUser = { username: data.username, token: response.token };
+          var tokenPayload = jwtHelper.decodeToken(response.token);
+          if (tokenPayload.role) {
+            currentUser.role = tokenPayload.role;
+          }
+          $localStorage.currentUser = currentUser;
+
+          $http.defaults.headers.common.Authorization = response.token;
+          // callback za uspesan login
+          callback(true);
+          $state.go('index.main');
+        } else {
+          // callback za neuspesan login
+          callback(false);
+        }
+      });
+    }
+
+    function logout() {
+      delete $localStorage.currentUser;
+      $http.defaults.headers.common.Authorization = '';
+      $state.go('login');
+    }
+
+    function signup(data, callback) {
+      $http.post('/api/user/signup', data).success(function (msg) {
+        callback(true);
+        $state.go('index.main');
+      }).error(function (msg) {
+        callback(false);
+      });
+    }
+
+    function currentUser() {
+      return $localStorage.currentUser;
+    }
+
+    return {
+      login: login,
+      logout: logout,
+      signup: signup,
+      currentUser: currentUser
+    };
+  }
 })();
 'use strict';
 
 (function () {
 
-  angular.module('inspinia').service('ResourceService', ResourceService);
+  angular.module('brbteam').service('ResourceService', ResourceService);
 
   function ResourceService($http) {
 
@@ -87,21 +144,16 @@ angular.module('inspinia').config(config).run(function ($rootScope, $state) {
 'use strict';
 
 /**
- * INSPINIA - Responsive Admin Theme
- *
- */
-
-/**
  * MainCtrl - controller
  */
-function MainCtrl() {
+function MainCtrl(AuthService) {
 
-  this.userName = 'Example user';
-  this.helloText = 'Welcome in SeedProject';
-  this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.';
+    this.userName = 'Example user';
+    this.helloText = 'Welcome in SeedProject';
+    this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these projects.';
 };
 
-angular.module('inspinia').controller('MainCtrl', MainCtrl);
+angular.module('brbteam').controller('MainCtrl', MainCtrl);
 'use strict';
 
 /**
@@ -254,7 +306,7 @@ function minimalizaSidebar($timeout) {
  *
  * Pass all functions into module
  */
-angular.module('inspinia').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('iboxToolsFullScreen', iboxToolsFullScreen);
+angular.module('brbteam').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('iboxToolsFullScreen', iboxToolsFullScreen);
 "use strict";
 
 /**
@@ -325,7 +377,46 @@ $(function () {
 
 (function () {
 
-  angular.module('inspinia').controller('InterviewController', InterviewController);
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
+
+  angular.module('brbteam').controller('InterviewController', InterviewController);
 
   function InterviewController($scope) {
 
@@ -363,7 +454,7 @@ $(function () {
 
 (function () {
 
-  angular.module('inspinia').controller('QuestionsController', QuestionsController);
+  angular.module('brbteam').controller('QuestionsController', QuestionsController);
 
   //todo user ngInject
 
@@ -405,23 +496,6 @@ $(function () {
         console.log("Error while searching questions");
       });
     }
-  }
-})();
-'use strict';
-
-(function () {
-  'use strict';
-
-  angular.module('app.questions', ['app.core']).config(config);
-
-  function config($stateProvider) {
-
-    $stateProvider.state('index.questions', {
-      url: "/questions",
-      templateUrl: "app/main/questions/questions.html",
-      controller: 'QuestionsController',
-      controllerAs: 'vm'
-    });
   }
 })();
 //# sourceMappingURL=client.js.map
