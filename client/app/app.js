@@ -6,6 +6,7 @@
         'ui.bootstrap',                 // Ui Bootstrap
         'ui.codemirror',
         'angular-jwt',
-        'ngStorage'
+        'ngStorage',
+        'btford.socket-io'
     ])
 })();

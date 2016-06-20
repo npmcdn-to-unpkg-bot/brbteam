@@ -4,7 +4,7 @@
     angular.module('brbteam', ['ui.router', // Routing
     'oc.lazyLoad', // ocLazyLoad
     'ui.bootstrap', // Ui Bootstrap
-    'ui.codemirror', 'angular-jwt', 'ngStorage']);
+    'ui.codemirror', 'angular-jwt', 'ngStorage', 'btford.socket-io']);
 })();
 "use strict";
 
@@ -123,6 +123,8 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
 
   angular.module('brbteam').service('ResourceService', ResourceService);
 
+  ResourceService.$inject = ['$http'];
+
   function ResourceService($http) {
 
     var questionApiUrl = "http://localhost:4000/api";
@@ -145,10 +147,19 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
 })();
 'use strict';
 
-/**
- * MainCtrl - controller
- */
-function MainCtrl(AuthService) {
+(function () {
+
+  angular.module('brbteam').service('SocketService', SocketService);
+
+  SocketService.$inject = ['socketFactory'];
+
+  function SocketService(socketFactory) {
+    return socketFactory();
+  }
+})();
+'use strict';
+
+function MainCtrl() {
 
     this.userName = 'Example user';
     this.helloText = 'Welcome in SeedProject';
@@ -381,6 +392,8 @@ $(function () {
 
   angular.module('brbteam').controller('AuthController', AuthController);
 
+  AuthController.$inject = ['AuthService', '$log'];
+
   function AuthController(AuthService, $log) {
     var vm = this;
 
@@ -420,7 +433,9 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  function InterviewController($scope) {
+  InterviewController.$inject = ['SocketService'];
+
+  function InterviewController(SocketService) {
 
     var vm = this;
 
@@ -437,6 +452,7 @@ $(function () {
 
     vm.change = function () {
       console.log(vm.currentCode);
+      SocketService.emit("type", vm.currentCode);
     };
 
     // functions
@@ -458,7 +474,7 @@ $(function () {
 
   angular.module('brbteam').controller('QuestionsController', QuestionsController);
 
-  //todo user ngInject
+  QuestionsController.$inject = ['$http', 'ResourceService'];
 
   function QuestionsController($http, ResourceService) {
 

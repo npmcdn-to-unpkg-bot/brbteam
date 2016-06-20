@@ -3,7 +3,9 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  function InterviewController() {
+  InterviewController.$inject = ['SocketService'];
+
+  function InterviewController(SocketService) {
 
     let vm = this;
 
@@ -20,6 +22,7 @@
 
     vm.change = () => {
       console.log(vm.currentCode);
+      SocketService.emit("type", vm.currentCode);
     }
 
     // functions

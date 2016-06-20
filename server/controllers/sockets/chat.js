@@ -1,12 +1,16 @@
 (() => {
 
-  const socket = require('socket.io');
+  module.exports = function(io) {
 
-  class ChatController
-  {
+    io.on('connection', (socket) => {
+      console.log('Connection established');
+
+      socket.on('type', (msg) => {
+        console.log(msg);
+      });
+
+    });
 
   }
-
-  module.exports = new ChatController;
 
 })();
