@@ -3,7 +3,7 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  function InterviewController($scope) {
+  function InterviewController() {
 
     let vm = this;
 

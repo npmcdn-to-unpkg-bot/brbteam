@@ -3,6 +3,8 @@
   angular.module('brbteam')
          .controller('AuthController', AuthController);
 
+  AuthController.$inject = ['AuthService', '$log'];
+
   function AuthController(AuthService, $log) {
     let vm = this;
 

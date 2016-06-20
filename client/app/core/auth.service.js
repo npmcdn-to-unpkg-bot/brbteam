@@ -3,6 +3,8 @@
   angular.module('brbteam')
          .service('AuthService', AuthService);
 
+  AuthService.$inject = ['$http', '$log', 'jwtHelper', '$state', '$localStorage'];
+
   function AuthService($http, $log, jwtHelper, $state, $localStorage)
   {
 

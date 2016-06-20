@@ -4,6 +4,8 @@
          .service('ResourceService', ResourceService);
 
 
+  ResourceService.$inject = ['$http'];
+
   function ResourceService($http) {
 
     const questionApiUrl = "http://localhost:4000/api";

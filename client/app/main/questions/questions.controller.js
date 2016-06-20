@@ -3,7 +3,7 @@
   angular.module('brbteam')
          .controller('QuestionsController', QuestionsController);
 
-  //todo user ngInject
+  QuestionsController.$inject = ['$http', 'ResourceService'];
 
   function QuestionsController($http, ResourceService) {
 
