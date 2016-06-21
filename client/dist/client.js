@@ -148,6 +148,18 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       return $http.get('/api/room/list');
     };
 
+    var closeRoom = function closeRoom(name) {
+      return $http.post('/api/room/' + name + "/close");
+    };
+
+    var joinRoom = function joinRoom(user, room) {
+      return $http.put('/api/room/' + room + "/join/" + user);
+    };
+
+    var roomAdmin = function roomAdmin(room) {
+      return $http.get('/api/room/' + room + "/admin");
+    };
+
     var getUser = function getUser(name) {
       return $http.get('/api/user/' + name);
     };
@@ -168,6 +180,9 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       // Rooms
       addRoom: addRoom,
       listRooms: listRooms,
+      closeRoom: closeRoom,
+      joinRoom: joinRoom,
+      roomAdmin: roomAdmin,
 
       // Users
       getUser: getUser,
@@ -543,6 +558,7 @@ $(function () {
 
     // Functions
     vm.addRoom = addRoom;
+    vm.joinRoom = joinRoom;
 
     ResourceService.listRooms().success(function (data) {
       vm.roomsList = data;
@@ -565,6 +581,15 @@ $(function () {
         $log.info(response);
       });
     }
+
+    function joinRoom(roomName) {
+      ResourceService.joinRoom(vm.currUser, roomName).success(function (response) {
+        $log.info("joined the room");
+        $state.go('index.myroom');
+      }).error(function (response) {
+        $log.info("Error joining room");
+      });
+    }
   }
 })();
 'use strict';
@@ -573,23 +598,32 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService', 'ResourceService'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService'];
 
-  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService, ResourceService) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService) {
     var vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
 
     vm.hasRoom = false;
+    vm.isAdmin = false;
 
     ResourceService.activeRoom(vm.currentUser).success(function (response) {
       $log.info(response);
       vm.currRoomName = response.room;
       vm.hasRoom = true;
 
-      if (response.room == undefined) {
+      if (response.room == undefined || response.room == "") {
         vm.hasRoom = false;
       }
+
+      connectToRoom();
+
+      ResourceService.roomAdmin(vm.currRoomName).success(function (data) {
+        if (data.admin === vm.currentUser) {
+          vm.isAdmin = true;
+        }
+      });
     }).error(function (response) {});
 
     // Data
@@ -613,14 +647,17 @@ $(function () {
     // Functions
     vm.change = change;
     vm.sendMsg = sendMsg;
+    vm.closeRoom = closeRoom;
 
-    // connect to the current room
-    if (vm.currRoomName && vm.hasRoom) {
-      var roomData = {};
-      roomData.room = vm.currRoomName;
-      roomData.user = vm.currentUser;
+    function connectToRoom() {
+      // connect to the current room
+      if (vm.currRoomName) {
+        var roomData = {};
+        roomData.room = vm.currRoomName;
+        roomData.user = vm.currentUser;
 
-      SocketService.emit('room', roomData);
+        SocketService.emit('room', roomData);
+      }
     }
 
     // parse received messages
@@ -638,12 +675,12 @@ $(function () {
     // We are getting what the user typed into the code editor
     SocketService.on("type", function (msg) {
       $log.info(msg.data);
-      vm.currentCode = msg.data;
+      vm.currentCode += msg.data;
     });
 
     function change() {
       var msg = {};
-      msg.data = vm.currentCode;
+      msg.data = vm.currentCode.slice(-1);
       msg.room = vm.currRoomName;
 
       SocketService.emit("type", msg);
@@ -664,6 +701,14 @@ $(function () {
       SocketService.emit('msg', msg);
       $log.info("msg sent to server to send to other clients");
       vm.currentMsg = "";
+    }
+
+    function closeRoom() {
+
+      ResourceService.closeRoom(vm.currRoomName).success(function (response) {
+        $log.info("Room closed");
+        $state.go('index.main');
+      });
     }
   }
 })();

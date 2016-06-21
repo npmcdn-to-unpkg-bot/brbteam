@@ -53,9 +53,30 @@
         } else {
           room.status = "Closed";
 
-          room.save((err) => {
-            res.json({success: true, msg:"Room closed"});
+          User.findOne({"username" :  room.admin}, (err, user) => {
+
+            user.activeRoom = "";
+
+            user.save();
+
+            room.save((err) => {
+              res.json({success: true, msg:"Room closed"});
+            });
           });
+
+        }
+
+      });
+    }
+
+    roomAdmin(req, res) {
+      Room.findOne({"name" : req.params.room}, (err, room) => {
+
+        if(err) {
+          res.json({success: false, msg:"Room not found"});
+        } else {
+          res.status(200);
+          res.json({admin: room.admin});
         }
 
       });
@@ -64,6 +85,9 @@
     joinRoom(req, res) {
       let roomName = req.params.room;
       let userName = req.params.user;
+
+      console.log("Wut m8?");
+      console.log(roomName + " " + userName);
 
       User.findOne({"username" :  userName}, (err, user) => {
 

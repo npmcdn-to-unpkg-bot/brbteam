@@ -14,6 +14,7 @@
 
     // Functions
     vm.addRoom = addRoom;
+    vm.joinRoom = joinRoom;
 
     ResourceService.listRooms()
     .success((data) => {
@@ -38,6 +39,17 @@
       })
       .error((response) => {
         $log.info(response);
+      });
+    }
+
+    function joinRoom(roomName) {
+      ResourceService.joinRoom(vm.currUser, roomName)
+      .success((response) => {
+        $log.info("joined the room");
+        $state.go('index.myroom');
+      })
+      .error((response) => {
+        $log.info("Error joining room");
       });
     }
   }

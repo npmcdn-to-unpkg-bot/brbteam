@@ -3,14 +3,15 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService', 'ResourceService'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService'];
 
-  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService, ResourceService) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService) {
     let vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
 
-      vm.hasRoom = false;
+    vm.hasRoom = false;
+    vm.isAdmin = false;
 
     ResourceService.activeRoom(vm.currentUser)
     .success((response) => {
@@ -18,9 +19,18 @@
       vm.currRoomName = response.room;
       vm.hasRoom = true;
 
-      if(response.room == undefined) {
+      if(response.room == undefined || response.room == "") {
         vm.hasRoom = false;
       }
+
+      connectToRoom();
+
+      ResourceService.roomAdmin(vm.currRoomName)
+      .success((data) => {
+        if(data.admin === vm.currentUser) {
+          vm.isAdmin = true;
+        }
+      });
 
     })
     .error((response) => {
@@ -48,15 +58,18 @@
     // Functions
     vm.change = change;
     vm.sendMsg = sendMsg;
+    vm.closeRoom = closeRoom;
 
-    // connect to the current room
-      if(vm.currRoomName && vm.hasRoom) {
-          var roomData = {};
-          roomData.room = vm.currRoomName;
-          roomData.user = vm.currentUser;
+    function connectToRoom() {
+        // connect to the current room
+        if(vm.currRoomName) {
+            var roomData = {};
+            roomData.room = vm.currRoomName;
+            roomData.user = vm.currentUser;
 
-          SocketService.emit('room', roomData);
-      }
+            SocketService.emit('room', roomData);
+        }
+    }
 
 
     // parse received messages
@@ -74,12 +87,12 @@
     // We are getting what the user typed into the code editor
     SocketService.on("type", (msg) => {
       $log.info(msg.data);
-      vm.currentCode = msg.data;
+      vm.currentCode += msg.data;
     });
 
     function change()  {
       let msg = {};
-      msg.data = vm.currentCode;
+      msg.data = vm.currentCode.slice(-1);
       msg.room = vm.currRoomName;
 
       SocketService.emit("type", msg);
@@ -100,6 +113,15 @@
       SocketService.emit('msg', msg);
       $log.info("msg sent to server to send to other clients");
       vm.currentMsg = "";
+    }
+
+    function closeRoom() {
+
+      ResourceService.closeRoom(vm.currRoomName)
+      .success((response) => {
+        $log.info("Room closed");
+        $state.go('index.main');
+      });
     }
 
 

@@ -28,5 +28,6 @@ router.post('/room/new', roomCtrl.addRoom);
 router.get('/room/list', roomCtrl.listRooms);
 router.post('/room/:name/close', roomCtrl.closeRoom);
 router.put('/room/:room/join/:user', roomCtrl.joinRoom);
+router.get('/room/:room/admin', roomCtrl.roomAdmin);
 
 module.exports = router;

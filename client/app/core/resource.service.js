@@ -32,7 +32,11 @@
     }
 
     let joinRoom = (user, room) => {
-      return $http.post('/api/room/' + room + "/join/" + user);
+      return $http.put('/api/room/' + room + "/join/" + user);
+    }
+
+    let roomAdmin = (room) => {
+      return $http.get('/api/room/' + room + "/admin");
     }
 
     let getUser = (name) => {
@@ -58,6 +62,7 @@
       listRooms : listRooms,
       closeRoom : closeRoom,
       joinRoom : joinRoom,
+      roomAdmin : roomAdmin,
 
       // Users
       getUser : getUser,

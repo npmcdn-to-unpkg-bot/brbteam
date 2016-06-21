@@ -5,10 +5,11 @@
     </div>
 
     <div class="col-lg-3">
-      <h3>People in room</h3>
-      <button class="btn btn-sm btn-primary pull-right " ng-click="" type="button">
+      <button class="btn btn-sm btn-danger pull-right " ng-if="vm.isAdmin" ng-click="vm.closeRoom()" type="button">
         <strong>Close room
           </strong></button>
+
+          <h3>People in room</h3>
       <div class="chat-users">
 
           <div class="users-list">
