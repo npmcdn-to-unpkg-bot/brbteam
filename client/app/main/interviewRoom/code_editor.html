@@ -62,87 +62,19 @@
     </div>
 
     <div class="content" chat-slim-scroll>
-
-        <div class="left">
-            <div class="author-name">
-                Monica Jackson <small class="chat-date">
-                10:02 am
-            </small>
-            </div>
-            <div class="chat-message active">
-                Lorem Ipsum is simply dummy text input.
-            </div>
-
-        </div>
-        <div class="right">
-            <div class="author-name">
-                Mick Smith
-                <small class="chat-date">
-                    11:24 am
-                </small>
-            </div>
-            <div class="chat-message">
-                Lorem Ipsum is simpl.
-            </div>
-        </div>
-        <div class="right">
+      <span ng-repeat="msg in vm.messages">
+       <div class="{{ msg.state }}">
            <div class="author-name">
-               Anna Lamson
+               {{ msg.name }}
                <small class="chat-date">
-                   11:24 am
-               </small>
-           </div>
-           <div class="chat-message">
-               The standard chunk of Lorem Ipsum
-           </div>
-       </div>
-       <div class="left">
-           <div class="author-name">
-               Mick Lane
-               <small class="chat-date">
-                   08:45 pm
+                   {{ msg.date | date:"HH:mm" }}
                </small>
            </div>
            <div class="chat-message active">
-               I belive that. Lorem Ipsum is simply dummy text.
+               {{ msg.data }}
            </div>
        </div>
-       <div class="right">
-           <div class="author-name">
-               Anna Lamson
-               <small class="chat-date">
-                   11:24 am
-               </small>
-           </div>
-           <div class="chat-message">
-               The standard chunk of Lorem Ipsum
-           </div>
-       </div>
-       <div class="left">
-           <div class="author-name">
-               Mick Lane
-               <small class="chat-date">
-                   08:45 pm
-               </small>
-           </div>
-           <div class="chat-message active">
-               I belive that. Lorem Ipsum is simply dummy text.
-           </div>
-       </div>
-        <div class="left">
-            <div class="author-name">
-                Alice Novak
-                <small class="chat-date">
-                    08:45 pm
-                </small>
-            </div>
-            <div class="chat-message active">
-                Check this stock char.
-            </div>
-        </div>
-
-
-
+     </span>
 
     </div>
     <div class="form-chat footer">

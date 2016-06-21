@@ -534,9 +534,9 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log'];
+  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService'];
 
-  function InterviewController(SocketService, $stateParams, RoomService, $log) {
+  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService) {
     var vm = this;
 
     // Data
@@ -550,8 +550,10 @@ $(function () {
 
     vm.hasRoom = RoomService.hasActiveRoom();
     vm.currRoomName = RoomService.getRoomName();
+    vm.currentUser = AuthService.currentUser().name;
     vm.currentCode = "";
     vm.currentMsg = "";
+    vm.messages = [];
 
     console.log(vm.currRoomName);
 
@@ -567,6 +569,8 @@ $(function () {
     // parse received messages
     SocketService.on("msg", function (msg) {
       $log.info(msg);
+      //msg.state = "left";
+      //vm.messages.push(msg);
     });
 
     function change() {
@@ -578,6 +582,11 @@ $(function () {
       var msg = {};
       msg.room = vm.currRoomName;
       msg.data = vm.currentMsg;
+      msg.name = vm.currentUser;
+      msg.date = new Date();
+      msg.state = "right";
+
+      vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
       $log.info("msg sent to server to send to other clients");
