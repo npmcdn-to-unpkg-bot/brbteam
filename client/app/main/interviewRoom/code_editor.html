@@ -1,7 +1,7 @@
 <div class="row wrapper" ng-if="vm.hasRoom">
     <div class="col-lg-9">
-      <ui-codemirror ng-model="vm.currentCode" ng-change="vm.change()" ui-codemirror-opts="vm.editorOptions">
-      <ui-codemirror>
+      <div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="vm.currentCode" ng-change="vm.change()" ui-codemirror-opts="vm.editorOptions">
+      </div>
     </div>
 
     <div class="col-lg-3">

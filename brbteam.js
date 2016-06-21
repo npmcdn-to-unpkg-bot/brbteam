@@ -7,10 +7,11 @@
   let mongoose = require('mongoose');
   let db = require('./server/config/db.js');
   let jwt = require('jwt-simple');
-  let chat = require('./server/controllers/sockets/chat.js');
-  let editor = require('./server/controllers/sockets/editor.js');
 
   let router = require("./server/routes.js");
+
+  let chat = require('./server/controllers/sockets/chat.js');
+  let editor = require('./server/controllers/sockets/editor.js');
 
   let passport = require('passport');
   require('./server/config/passport.js')(passport);

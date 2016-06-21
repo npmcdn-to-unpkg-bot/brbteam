@@ -172,6 +172,10 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       return $http.get('/api/user/' + name + "/room");
     };
 
+    var messagesInRoom = function messagesInRoom(room) {
+      return $http.get('/api/messages/' + room);
+    };
+
     return {
       // Questions
       addQuestion: addQuestion,
@@ -187,7 +191,10 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       // Users
       getUser: getUser,
       updateUser: updateUser,
-      activeRoom: activeRoom
+      activeRoom: activeRoom,
+
+      // Messages
+      messagesInRoom: messagesInRoom
     };
   }
 })();
@@ -598,9 +605,9 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope'];
 
-  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope) {
     var vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
@@ -618,6 +625,7 @@ $(function () {
       }
 
       connectToRoom();
+      messagesLoad(vm.currRoomName);
 
       ResourceService.roomAdmin(vm.currRoomName).success(function (data) {
         if (data.admin === vm.currentUser) {
@@ -625,6 +633,14 @@ $(function () {
         }
       });
     }).error(function (response) {});
+
+    // load all msg conversation in the room
+    function messagesLoad(room) {
+      ResourceService.messagesInRoom(room).success(function (response) {
+        $log.info(response);
+        vm.messages = response;
+      }).error(function (response) {});
+    }
 
     // Data
     vm.editorOptions = {
@@ -694,8 +710,6 @@ $(function () {
       msg.date = new Date();
       msg.state = "right";
 
-      $log.info(msg);
-
       vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
@@ -710,6 +724,17 @@ $(function () {
         $state.go('index.main');
       });
     }
+
+    $scope.codemirrorLoaded = function (_editor) {
+
+      var _doc = _editor.getDoc();
+      _editor.focus();
+
+      _editor.on("change", function (e, ch) {
+        console.log(ch);
+        console.log(_editor.getCursor());
+      });
+    };
   }
 })();
 'use strict';

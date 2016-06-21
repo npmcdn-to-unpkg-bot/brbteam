@@ -5,10 +5,11 @@
   let roomSchema = require('mongoose').model('Room').schema
 
   let messageSchema = new mongoose.Schema({
-    text: {type: String, required: true},
-    from: userSchema,
-    chatRoom: roomSchema,
-    time: {type: Date, default: Date.now}
+    data: {type: String, required: true},
+    name: {type: String, required: true},
+    room: {type: String, required: true},
+    date: {type: Date, default: Date.now},
+    state: {type: String}
   });
 
   mongoose.model('Message', messageSchema);

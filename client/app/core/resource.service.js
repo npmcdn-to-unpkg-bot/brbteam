@@ -52,6 +52,10 @@
 
     }
 
+    let messagesInRoom = (room) => {
+      return $http.get('/api/messages/' + room);
+    }
+
     return {
       // Questions
       addQuestion : addQuestion,
@@ -67,7 +71,10 @@
       // Users
       getUser : getUser,
       updateUser : updateUser,
-      activeRoom : activeRoom
+      activeRoom : activeRoom,
+
+      // Messages
+      messagesInRoom : messagesInRoom
     }
 
   }

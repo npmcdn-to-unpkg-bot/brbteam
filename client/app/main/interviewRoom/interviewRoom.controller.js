@@ -3,9 +3,9 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope'];
 
-  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope) {
     let vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
@@ -24,6 +24,7 @@
       }
 
       connectToRoom();
+      messagesLoad(vm.currRoomName);
 
       ResourceService.roomAdmin(vm.currRoomName)
       .success((data) => {
@@ -36,6 +37,19 @@
     .error((response) => {
 
     });
+
+    // load all msg conversation in the room
+    function messagesLoad(room) {
+      ResourceService.messagesInRoom(room)
+      .success((response) => {
+        $log.info(response);
+        vm.messages = response;
+      })
+      .error((response) => {
+
+      });
+    }
+
 
     // Data
     vm.editorOptions = {
@@ -106,8 +120,6 @@
       msg.date = new Date();
       msg.state = "right";
 
-      $log.info(msg);
-
       vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
@@ -121,6 +133,17 @@
       .success((response) => {
         $log.info("Room closed");
         $state.go('index.main');
+      });
+    }
+
+    $scope.codemirrorLoaded = function(_editor){
+
+      var _doc = _editor.getDoc();
+      _editor.focus();
+
+      _editor.on("change", function(e, ch){
+        console.log(ch);
+        console.log(_editor.getCursor());
       });
     }
 

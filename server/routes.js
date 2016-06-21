@@ -30,4 +30,8 @@ router.post('/room/:name/close', roomCtrl.closeRoom);
 router.put('/room/:room/join/:user', roomCtrl.joinRoom);
 router.get('/room/:room/admin', roomCtrl.roomAdmin);
 
+router.get('/messages/:room', messageCtrl.messagesInRoom);
+
+messageCtrl.test;
+
 module.exports = router;

@@ -1,5 +1,21 @@
 (() => {
 
+  const mongoose = require("mongoose");
+  let Message = mongoose.model('Message');
+
+  function saveMsg(msg) {
+    let message =  new Message({
+      data: msg.data,
+      name: msg.name,
+      room: msg.room,
+      date: msg.date
+    });
+
+    message.save((err) => {
+
+    });
+  }
+
   module.exports = function(io) {
 
     let rooms = {};
@@ -16,7 +32,7 @@
       });
 
       socket.on('msg', (msg) => {
-        console.log("Emiting data " + msg.data + " to room " + msg.room);
+        saveMsg(msg);
         socket.broadcast.to(msg.room).emit('msg', msg);
       });
 
