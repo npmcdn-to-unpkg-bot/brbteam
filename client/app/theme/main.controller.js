@@ -9,7 +9,10 @@
     let vm = this;
 
     // Data
-    vm.userName = AuthService.currentUser().username;
+    if(AuthService.currentUser() !== undefined) {
+      vm.userName = AuthService.currentUser().username;
+    }
+
 
 
     // Functions

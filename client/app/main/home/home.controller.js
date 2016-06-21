@@ -2,9 +2,9 @@
   angular.module('brbteam')
          .controller('HomeController', HomeController);
 
-  HomeController.$inject = ['ResourceService', '$log', '$state'];
+  HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService'];
 
-  function HomeController(ResourceService, $log, $state) {
+  function HomeController(ResourceService, $log, $state, RoomService) {
     let vm = this;
 
     // Data
@@ -19,6 +19,7 @@
       ResourceService.addRoom(vm.room)
       .success((response) => {
         $log.info(response);
+        RoomService.setRoomName(vm.room.name);
         vm.room = {};
         $state.go('index.myroom');
 

@@ -156,6 +156,43 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
 
 (function () {
 
+  angular.module('brbteam').service('RoomService', RoomService);
+
+  RoomService.$inject = [];
+
+  //TODO: we need to write it in and check from the server so the room stays even if you log out or close
+
+  function RoomService() {
+
+    var currRoom = {};
+
+    function getRoomName() {
+      return currRoom.name;
+    }
+
+    function setRoomName(name) {
+      currRoom.name = name;
+    }
+
+    function hasActiveRoom() {
+      if (currRoom.name) {
+        return true;
+      }
+
+      return false;
+    }
+
+    return {
+      getRoomName: getRoomName,
+      setRoomName: setRoomName,
+      hasActiveRoom: hasActiveRoom
+    };
+  }
+})();
+'use strict';
+
+(function () {
+
   angular.module('brbteam').service('SocketService', SocketService);
 
   SocketService.$inject = ['socketFactory'];
@@ -409,7 +446,9 @@ $(function () {
     var vm = this;
 
     // Data
-    vm.userName = AuthService.currentUser().username;
+    if (AuthService.currentUser() !== undefined) {
+      vm.userName = AuthService.currentUser().username;
+    }
 
     // Functions
     vm.logout = logout;
@@ -465,9 +504,9 @@ $(function () {
 (function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
-  HomeController.$inject = ['ResourceService', '$log', '$state'];
+  HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService'];
 
-  function HomeController(ResourceService, $log, $state) {
+  function HomeController(ResourceService, $log, $state, RoomService) {
     var vm = this;
 
     // Data
@@ -480,6 +519,7 @@ $(function () {
 
       ResourceService.addRoom(vm.room).success(function (response) {
         $log.info(response);
+        RoomService.setRoomName(vm.room.name);
         vm.room = {};
         $state.go('index.myroom');
       }).error(function (response) {
@@ -494,31 +534,54 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$stateParams'];
+  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log'];
 
-  function InterviewController(SocketService, $stateParams) {
+  function InterviewController(SocketService, $stateParams, RoomService, $log) {
     var vm = this;
 
     // Data
     vm.editorOptions = {
       lineNumbers: true,
-      theme: 'rubyblue',
+      theme: 'twilight',
       lineWrapping: true,
       height: 500,
       mode: 'javascript'
     };
 
-    vm.currRoomName = $stateParams.roomname;
+    vm.hasRoom = RoomService.hasActiveRoom();
+    vm.currRoomName = RoomService.getRoomName();
     vm.currentCode = "";
+    vm.currentMsg = "";
 
     console.log(vm.currRoomName);
 
     // Functions
     vm.change = change;
+    vm.sendMsg = sendMsg;
+
+    // connect to the current room
+    SocketService.on("connect", function () {
+      SocketService.emit('room', vm.currRoomName);
+    });
+
+    // parse received messages
+    SocketService.on("msg", function (msg) {
+      $log.info(msg);
+    });
 
     function change() {
       console.log(vm.currentCode);
       SocketService.emit("type", vm.currentCode);
+    }
+
+    function sendMsg() {
+      var msg = {};
+      msg.room = vm.currRoomName;
+      msg.data = vm.currentMsg;
+
+      SocketService.emit('msg', msg);
+      $log.info("msg sent to server to send to other clients");
+      vm.currentMsg = "";
     }
 
     // functions
