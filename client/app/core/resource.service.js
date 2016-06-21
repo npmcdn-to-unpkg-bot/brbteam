@@ -27,6 +27,14 @@
       return $http.get('/api/room/list');
     }
 
+    let closeRoom = (name) => {
+      return $http.post('/api/room/' + name + "/close");
+    }
+
+    let joinRoom = (user, room) => {
+      return $http.post('/api/room/' + room + "/join/" + user);
+    }
+
     let getUser = (name) => {
       return $http.get('/api/user/' + name);
     }
@@ -48,6 +56,8 @@
       // Rooms
       addRoom : addRoom,
       listRooms : listRooms,
+      closeRoom : closeRoom,
+      joinRoom : joinRoom,
 
       // Users
       getUser : getUser,

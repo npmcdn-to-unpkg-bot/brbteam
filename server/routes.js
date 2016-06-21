@@ -26,5 +26,7 @@ router.get('/user/:name/room', userCtrl.activeRoom);
 
 router.post('/room/new', roomCtrl.addRoom);
 router.get('/room/list', roomCtrl.listRooms);
+router.post('/room/:name/close', roomCtrl.closeRoom);
+router.put('/room/:room/join/:user', roomCtrl.joinRoom);
 
 module.exports = router;

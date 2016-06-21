@@ -9,7 +9,8 @@
       let room = new Room({
         name: req.body.name,
         privateRoom: req.body.privateRoom,
-        admin: req.body.admin
+        admin: req.body.admin,
+        status: "Active"
       });
 
       User.findOne({"username" :  req.body.admin}, (err, user) => {
@@ -42,6 +43,42 @@
 
 
       });
+    }
+
+    closeRoom(req, res) {
+      Room.findOne({"name" : req.params.name}, (err, room) => {
+
+        if(err) {
+          res.json({success: false, msg:"Room not found"});
+        } else {
+          room.status = "Closed";
+
+          room.save((err) => {
+            res.json({success: true, msg:"Room closed"});
+          });
+        }
+
+      });
+    }
+
+    joinRoom(req, res) {
+      let roomName = req.params.room;
+      let userName = req.params.user;
+
+      User.findOne({"username" :  userName}, (err, user) => {
+
+        if(err) {
+          res.json({success: false, msg:"Error finding room"});
+        } else {
+          user.activeRoom = roomName;
+
+          user.save((err) => {
+            res.json({success: true, msg:"Joined room"});
+          });
+        }
+
+      });
+
     }
 
   };
