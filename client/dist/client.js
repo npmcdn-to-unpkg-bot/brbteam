@@ -461,47 +461,6 @@ $(function () {
 'use strict';
 
 (function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService'];
@@ -562,15 +521,18 @@ $(function () {
     vm.sendMsg = sendMsg;
 
     // connect to the current room
-    SocketService.on("connect", function () {
+    //SocketService.on("connect", () => {
+    if (vm.currRoomName) {
       SocketService.emit('room', vm.currRoomName);
-    });
+    }
+
+    //  });
 
     // parse received messages
     SocketService.on("msg", function (msg) {
       $log.info(msg);
-      //msg.state = "left";
-      //vm.messages.push(msg);
+      msg.state = "left";
+      vm.messages.push(msg);
     });
 
     function change() {
@@ -604,6 +566,47 @@ $(function () {
     //     console.log(doc);
     //   });
     // }
+  }
+})();
+'use strict';
+
+(function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log'];
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
   }
 })();
 'use strict';

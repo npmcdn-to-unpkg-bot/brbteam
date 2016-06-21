@@ -31,15 +31,18 @@
     vm.sendMsg = sendMsg;
 
     // connect to the current room
-    SocketService.on("connect", () => {
-      SocketService.emit('room', vm.currRoomName);
-    });
+    //SocketService.on("connect", () => {
+      if(vm.currRoomName) {
+          SocketService.emit('room', vm.currRoomName);
+      }
+
+  //  });
 
     // parse received messages
     SocketService.on("msg", (msg) => {
       $log.info(msg);
-      //msg.state = "left";
-      //vm.messages.push(msg);
+      msg.state = "left";
+      vm.messages.push(msg);
     });
 
 

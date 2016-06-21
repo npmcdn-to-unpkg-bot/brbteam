@@ -12,12 +12,12 @@
       // the client send us the room we want to join
       socket.on('room', (room) => {
         socket.join(room);
-        console.log("Room joined");
+        console.log("Room joined " + room);
       });
 
       socket.on('msg', (msg) => {
         console.log("Emiting data " + msg.data + " to room " + msg.room);
-        io.sockets.in(msg.room).emit('msg', msg.data);
+        socket.broadcast.to(msg.room).emit('msg', msg);
       });
 
     });
