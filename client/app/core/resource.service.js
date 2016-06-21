@@ -23,12 +23,21 @@
       return $http.post('/api/room/new', data);
     }
 
+    let listRooms = () => {
+      return $http.get('/api/room/list');
+    }
+
     let getUser = (name) => {
       return $http.get('/api/user/' + name);
     }
 
     let updateUser = (name, data) => {
       return $http.put('/api/user/' + name, data);
+    }
+
+    let activeRoom = (name) => {
+      return $http.get('/api/user/' + name + "/room");
+
     }
 
     return {
@@ -38,10 +47,12 @@
 
       // Rooms
       addRoom : addRoom,
+      listRooms : listRooms,
 
       // Users
       getUser : getUser,
-      updateUser : updateUser
+      updateUser : updateUser,
+      activeRoom : activeRoom
     }
 
   }

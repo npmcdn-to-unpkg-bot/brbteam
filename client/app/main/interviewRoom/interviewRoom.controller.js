@@ -3,10 +3,29 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService'];
+  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService', 'ResourceService'];
 
-  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService) {
+  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService, ResourceService) {
     let vm = this;
+
+    vm.currentUser = AuthService.currentUser().username;
+
+      vm.hasRoom = false;
+
+    ResourceService.activeRoom(vm.currentUser)
+    .success((response) => {
+      $log.info(response);
+      vm.currRoomName = response.room;
+      vm.hasRoom = true;
+
+      if(response.room == undefined) {
+        vm.hasRoom = false;
+      }
+
+    })
+    .error((response) => {
+
+    });
 
     // Data
     vm.editorOptions = {
@@ -17,9 +36,6 @@
       mode : 'javascript'
     };
 
-    vm.hasRoom = RoomService.hasActiveRoom();
-    vm.currRoomName = RoomService.getRoomName();
-    vm.currentUser = AuthService.currentUser().username;
     vm.currentCode = "";
     vm.currentMsg = "";
     vm.messages = [];
@@ -34,7 +50,7 @@
     vm.sendMsg = sendMsg;
 
     // connect to the current room
-      if(vm.currRoomName) {
+      if(vm.currRoomName && vm.hasRoom) {
           var roomData = {};
           roomData.room = vm.currRoomName;
           roomData.user = vm.currentUser;

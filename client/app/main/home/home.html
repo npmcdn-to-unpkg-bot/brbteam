@@ -45,6 +45,32 @@
                             <h4 class="m-b-xxs">Search for available rooms </h4>
                             <p>You can find only public rooms</p>
 
+                            <div class="ibox-content">
+                              <table class="table">
+                                  <thead>
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Room name</th>
+                                      <th>State</th>
+                                      <th></th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="room in vm.roomsList">
+                                      <td>{{ $index + 1}}</td>
+                                      <td>{{ room.name }}</td>
+                                      <td>{{ room.privateRoom }}</td>
+                                      <td>
+                                        <button class="btn btn-sm btn-primary pull-right" ng-click="" type="button">
+                                          <strong>Join</strong>
+                                        </button>
+                                      </td>
+                                  </tr>
+                                  </tbody>
+                              </table>
+
+                          </div>
+
                         </div>
                     </div>
 

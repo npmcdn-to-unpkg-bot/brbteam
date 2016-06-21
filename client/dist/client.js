@@ -144,12 +144,20 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       return $http.post('/api/room/new', data);
     };
 
+    var listRooms = function listRooms() {
+      return $http.get('/api/room/list');
+    };
+
     var getUser = function getUser(name) {
       return $http.get('/api/user/' + name);
     };
 
     var updateUser = function updateUser(name, data) {
       return $http.put('/api/user/' + name, data);
+    };
+
+    var activeRoom = function activeRoom(name) {
+      return $http.get('/api/user/' + name + "/room");
     };
 
     return {
@@ -159,10 +167,12 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
 
       // Rooms
       addRoom: addRoom,
+      listRooms: listRooms,
 
       // Users
       getUser: getUser,
-      updateUser: updateUser
+      updateUser: updateUser,
+      activeRoom: activeRoom
     };
   }
 })();
@@ -172,16 +182,19 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
 
   angular.module('brbteam').service('RoomService', RoomService);
 
-  RoomService.$inject = [];
+  RoomService.$inject = ['$http', 'AuthService'];
 
   //TODO: we need to write it in and check from the server so the room stays even if you log out or close
 
-  function RoomService() {
+  function RoomService($http, AuthService) {
 
     var currRoom = {};
 
     function getRoomName() {
-      return currRoom.name;
+
+      if (currRoom.name) {
+        return currRoom.name;
+      }
     }
 
     function setRoomName(name) {
@@ -518,18 +531,30 @@ $(function () {
 (function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
-  HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService'];
+  HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
 
-  function HomeController(ResourceService, $log, $state, RoomService) {
+  function HomeController(ResourceService, $log, $state, RoomService, AuthService) {
     var vm = this;
 
     // Data
     vm.room = {};
+    vm.roomsList = [];
+    vm.currUser = AuthService.currentUser().username;
 
     // Functions
     vm.addRoom = addRoom;
 
+    ResourceService.listRooms().success(function (data) {
+      vm.roomsList = data;
+    });
+
     function addRoom() {
+
+      if (vm.room.privateRoom == undefined) {
+        vm.room.privateRoom = false;
+      }
+
+      vm.room.admin = vm.currUser;
 
       ResourceService.addRoom(vm.room).success(function (response) {
         $log.info(response);
@@ -548,10 +573,24 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService'];
+  InterviewController.$inject = ['SocketService', '$stateParams', 'RoomService', '$log', 'AuthService', 'ResourceService'];
 
-  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService) {
+  function InterviewController(SocketService, $stateParams, RoomService, $log, AuthService, ResourceService) {
     var vm = this;
+
+    vm.currentUser = AuthService.currentUser().username;
+
+    vm.hasRoom = false;
+
+    ResourceService.activeRoom(vm.currentUser).success(function (response) {
+      $log.info(response);
+      vm.currRoomName = response.room;
+      vm.hasRoom = true;
+
+      if (response.room == undefined) {
+        vm.hasRoom = false;
+      }
+    }).error(function (response) {});
 
     // Data
     vm.editorOptions = {
@@ -562,9 +601,6 @@ $(function () {
       mode: 'javascript'
     };
 
-    vm.hasRoom = RoomService.hasActiveRoom();
-    vm.currRoomName = RoomService.getRoomName();
-    vm.currentUser = AuthService.currentUser().username;
     vm.currentCode = "";
     vm.currentMsg = "";
     vm.messages = [];
@@ -579,7 +615,7 @@ $(function () {
     vm.sendMsg = sendMsg;
 
     // connect to the current room
-    if (vm.currRoomName) {
+    if (vm.currRoomName && vm.hasRoom) {
       var roomData = {};
       roomData.room = vm.currRoomName;
       roomData.user = vm.currentUser;

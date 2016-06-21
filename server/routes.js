@@ -16,12 +16,15 @@ const roomCtrl = require('./controllers/room.controller');
 require('./models/message.model');
 const messageCtrl = require('./controllers/message.controller');
 
-router.get('/addUser', userCtrl.addUser);
 router.post('/user/signup', authCtrl.signUp);
 router.post('/user/login', authCtrl.login);
+
+router.get('/addUser', userCtrl.addUser);
 router.get('/user/:name', userCtrl.getUser);
 router.put('/user/:name', userCtrl.updateUser);
+router.get('/user/:name/room', userCtrl.activeRoom);
 
 router.post('/room/new', roomCtrl.addRoom);
+router.get('/room/list', roomCtrl.listRooms);
 
 module.exports = router;

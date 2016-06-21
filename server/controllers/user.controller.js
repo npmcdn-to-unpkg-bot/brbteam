@@ -42,7 +42,7 @@
       User.findOne({"username" : req.params.name}, (err, user) => {
 
         if(err) {
-
+          res.json({success: false, msg:"Error updating user"});
         } else {
           user.firstName = req.body.firstName;
           user.lastName = req.body.lastName;
@@ -50,6 +50,23 @@
           user.industry = req.body.industry;
 
           user.save();
+        }
+
+      });
+    }
+
+    activeRoom(req, res) {
+
+      console.log(req.params.name);
+
+      User.findOne({"username" : req.params.name}, (err, user) => {
+
+        if(err) {
+          res.json({success: false, msg:"Error finding users room"});
+        } else {
+          res.status(200);
+          console.log({"room": user.activeRoom});
+          res.json({"room": user.activeRoom});
         }
 
       });

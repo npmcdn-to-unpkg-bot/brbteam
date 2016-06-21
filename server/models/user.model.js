@@ -3,6 +3,8 @@
   const mongoose = require("mongoose");
   const bcrypt = require("bcrypt");
 
+  //let roomSchema = require('mongoose').model('Room').schema
+
   let userSchema = new mongoose.Schema({
       firstName: {type: String},
       lastName: {type: String},

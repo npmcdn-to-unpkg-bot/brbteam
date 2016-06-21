@@ -1,27 +1,49 @@
 (() => {
   const mongoose = require("mongoose");
   let Room = mongoose.model('Room');
+  let User = mongoose.model('User');
 
   class RoomCtrl {
 
-    addRoom(req, res)
-    {
+    addRoom(req, res) {
       let room = new Room({
         name: req.body.name,
         privateRoom: req.body.privateRoom,
-        //    admin: currentUser
+        admin: req.body.admin
       });
 
-      room.save((err) => {
+      User.findOne({"username" :  req.body.admin}, (err, user) => {
+
+        console.log(req.body.admin);
+        user.activeRoom = req.body.name;
+        user.save();
+
+        room.save((err) => {
+          if(err) {
+            console.log(err);
+          }
+
+          res.json({success: true, msg:"Room created"});
+
+        });
+
+      });
+
+    };
+
+    listRooms(req, res) {
+      Room.find({}, (err, rooms) => {
         if(err) {
-          console.log(err);
+          res.json({success: false, msg:"Rooms not found"});
+        } else {
+          res.status(200);
+          res.json(rooms);
         }
 
-        res.json({success: true, msg:"Room created"});
 
       });
-
     }
+
   };
 
   module.exports = new RoomCtrl;
