@@ -44,7 +44,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
           data: { pageTitle: 'Example view' }
         })
         .state('index.myroom', {
-          url: "/myroom",
+          url: "/myroom/:roomname",
           templateUrl: "app/main/interviewRoom/code_editor.html",
           controller: 'InterviewController',
           controllerAs: 'vm',

@@ -1,15 +1,49 @@
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
+<div class="row wrapper">
+    <div class="col-lg-9">
       <ui-codemirror ng-model="vm.currentCode" ng-change="vm.change()" ui-codemirror-opts="vm.editorOptions">
       <ui-codemirror>
-    <div class="col-lg-2">
-
     </div>
 
+    <div class="col-lg-3">
+      <h3>People in room</h3>
+      <div class="chat-users">
+
+          <div class="users-list">
+
+              <div class="chat-user">
+                  <span class="pull-right label label-primary">Online</span>
+                  <img class="chat-avatar"  alt="" >
+                  <div class="chat-user-name">
+                      <a href="#">Michael Smith</a>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9 white-bg">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Console output</h5>
+                        <div ibox-tools></div>
+                    </div>
+                    <div class="ibox-content">
+                        <div slim-scroll box-height="40px">
+                          <ul>
+                            <li>> You can see the output here</li>
+                          </ul>
+                        </div>
+                    </div>
+                </div>
+      </div>
+
 </div>
 
+<!-- <div class="row wrapper">
 
-</div>
+</div> -->
+
 
 
 

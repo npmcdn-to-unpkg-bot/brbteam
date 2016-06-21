@@ -46,7 +46,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         controllerAs: 'vm',
         data: { pageTitle: 'Example view' }
     }).state('index.myroom', {
-        url: "/myroom",
+        url: "/myroom/:roomname",
         templateUrl: "app/main/interviewRoom/code_editor.html",
         controller: 'InterviewController',
         controllerAs: 'vm',
@@ -213,7 +213,7 @@ function iboxTools($timeout) {
     return {
         restrict: 'A',
         scope: true,
-        templateUrl: 'views/common/ibox_tools.html',
+        templateUrl: 'app/theme/views/common/ibox_tools.html',
         controller: function controller($scope, $element) {
             // Function for collapse ibox
             $scope.showhide = function () {
@@ -494,27 +494,32 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService'];
+  InterviewController.$inject = ['SocketService', '$stateParams'];
 
-  function InterviewController(SocketService) {
-
+  function InterviewController(SocketService, $stateParams) {
     var vm = this;
 
-    vm.hi = "HI";
-    // data
+    // Data
     vm.editorOptions = {
       lineNumbers: true,
-      theme: 'twilight',
+      theme: 'rubyblue',
       lineWrapping: true,
+      height: 500,
       mode: 'javascript'
     };
 
+    vm.currRoomName = $stateParams.roomname;
     vm.currentCode = "";
 
-    vm.change = function () {
+    console.log(vm.currRoomName);
+
+    // Functions
+    vm.change = change;
+
+    function change() {
       console.log(vm.currentCode);
       SocketService.emit("type", vm.currentCode);
-    };
+    }
 
     // functions
     //  vm.codemirrorLoaded = codemirrorLoaded;
