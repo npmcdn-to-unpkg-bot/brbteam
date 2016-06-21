@@ -10,11 +10,11 @@
 
           <div class="users-list">
 
-              <div class="chat-user">
+              <div class="chat-user" ng-repeat="user in vm.users">
                   <span class="pull-right label label-primary">Online</span>
                   <img class="chat-avatar"  alt="" >
                   <div class="chat-user-name">
-                      <a href="#">Michael Smith</a>
+                      <a href="#">{{ user }}</a>
                   </div>
               </div>
 
@@ -56,9 +56,9 @@
 
     <div class="heading" draggable="true">
         <small class="chat-date pull-right">
-            02.19.2015
+            Online
         </small>
-        Small chat
+        Interview Chat
     </div>
 
     <div class="content" chat-slim-scroll>

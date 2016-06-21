@@ -8,6 +8,7 @@
   let db = require('./server/config/db.js');
   let jwt = require('jwt-simple');
   let chat = require('./server/controllers/sockets/chat.js');
+  let editor = require('./server/controllers/sockets/editor.js');
 
   let router = require("./server/routes.js");
 
@@ -31,5 +32,6 @@
   let io = require('socket.io').listen(server);
 
   chat(io);
+  editor(io);
 
 })()

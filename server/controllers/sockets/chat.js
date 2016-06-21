@@ -2,17 +2,17 @@
 
   module.exports = function(io) {
 
-    io.on('connection', (socket) => {
-      console.log('Connection established');
+    let rooms = {};
 
-      socket.on('type', (msg) => {
-        console.log(msg);
-      });
+    io.on('connection', (socket) => {
 
       // the client send us the room we want to join
-      socket.on('room', (room) => {
-        socket.join(room);
-        console.log("Room joined " + room);
+      socket.on('room', (data) => {
+        socket.join(data.room);
+        console.log("Room joined " + data.room);
+
+        // sent to other clients that the person has joined in
+        socket.broadcast.to(data.room).emit('adduser', data.user);
       });
 
       socket.on('msg', (msg) => {

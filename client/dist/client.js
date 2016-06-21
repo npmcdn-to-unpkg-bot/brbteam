@@ -461,6 +461,47 @@ $(function () {
 'use strict';
 
 (function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log'];
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService'];
@@ -509,10 +550,13 @@ $(function () {
 
     vm.hasRoom = RoomService.hasActiveRoom();
     vm.currRoomName = RoomService.getRoomName();
-    vm.currentUser = AuthService.currentUser().name;
+    vm.currentUser = AuthService.currentUser().username;
     vm.currentCode = "";
     vm.currentMsg = "";
     vm.messages = [];
+
+    vm.users = [];
+    vm.users.push(vm.currentUser);
 
     console.log(vm.currRoomName);
 
@@ -521,12 +565,13 @@ $(function () {
     vm.sendMsg = sendMsg;
 
     // connect to the current room
-    //SocketService.on("connect", () => {
     if (vm.currRoomName) {
-      SocketService.emit('room', vm.currRoomName);
-    }
+      var roomData = {};
+      roomData.room = vm.currRoomName;
+      roomData.user = vm.currentUser;
 
-    //  });
+      SocketService.emit('room', roomData);
+    }
 
     // parse received messages
     SocketService.on("msg", function (msg) {
@@ -535,9 +580,23 @@ $(function () {
       vm.messages.push(msg);
     });
 
+    // When a user has joined the room
+    SocketService.on("adduser", function (user) {
+      vm.users.push(user);
+    });
+
+    // We are getting what the user typed into the code editor
+    SocketService.on("type", function (msg) {
+      $log.info(msg.data);
+      vm.currentCode = msg.data;
+    });
+
     function change() {
-      console.log(vm.currentCode);
-      SocketService.emit("type", vm.currentCode);
+      var msg = {};
+      msg.data = vm.currentCode;
+      msg.room = vm.currRoomName;
+
+      SocketService.emit("type", msg);
     }
 
     function sendMsg() {
@@ -548,64 +607,13 @@ $(function () {
       msg.date = new Date();
       msg.state = "right";
 
+      $log.info(msg);
+
       vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
       $log.info("msg sent to server to send to other clients");
       vm.currentMsg = "";
-    }
-
-    // functions
-    //  vm.codemirrorLoaded = codemirrorLoaded;
-
-    // function codemirrorLoaded() {
-    //   let doc = _editor.getDoc();
-    //
-    //
-    //   _editor.on("change", () => {
-    //     console.log(doc);
-    //   });
-    // }
-  }
-})();
-'use strict';
-
-(function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
     }
   }
 })();

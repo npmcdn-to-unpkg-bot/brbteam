@@ -19,10 +19,13 @@
 
     vm.hasRoom = RoomService.hasActiveRoom();
     vm.currRoomName = RoomService.getRoomName();
-    vm.currentUser = AuthService.currentUser().name;
+    vm.currentUser = AuthService.currentUser().username;
     vm.currentCode = "";
     vm.currentMsg = "";
     vm.messages = [];
+
+    vm.users = [];
+    vm.users.push(vm.currentUser);
 
     console.log(vm.currRoomName);
 
@@ -31,12 +34,14 @@
     vm.sendMsg = sendMsg;
 
     // connect to the current room
-    //SocketService.on("connect", () => {
       if(vm.currRoomName) {
-          SocketService.emit('room', vm.currRoomName);
+          var roomData = {};
+          roomData.room = vm.currRoomName;
+          roomData.user = vm.currentUser;
+
+          SocketService.emit('room', roomData);
       }
 
-  //  });
 
     // parse received messages
     SocketService.on("msg", (msg) => {
@@ -45,10 +50,23 @@
       vm.messages.push(msg);
     });
 
+    // When a user has joined the room
+    SocketService.on("adduser", (user) => {
+      vm.users.push(user);
+    });
+
+    // We are getting what the user typed into the code editor
+    SocketService.on("type", (msg) => {
+      $log.info(msg.data);
+      vm.currentCode = msg.data;
+    });
 
     function change()  {
-      console.log(vm.currentCode);
-      SocketService.emit("type", vm.currentCode);
+      let msg = {};
+      msg.data = vm.currentCode;
+      msg.room = vm.currRoomName;
+
+      SocketService.emit("type", msg);
     }
 
     function sendMsg() {
@@ -59,6 +77,8 @@
       msg.date = new Date();
       msg.state = "right";
 
+      $log.info(msg);
+
       vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
@@ -66,23 +86,6 @@
       vm.currentMsg = "";
     }
 
-
-
-
-
-
-
-    // functions
-  //  vm.codemirrorLoaded = codemirrorLoaded;
-
-    // function codemirrorLoaded() {
-    //   let doc = _editor.getDoc();
-    //
-    //
-    //   _editor.on("change", () => {
-    //     console.log(doc);
-    //   });
-    // }
 
   }
 
