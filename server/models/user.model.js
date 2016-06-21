@@ -9,7 +9,10 @@
       username: {type: String, required: true},
       email: {type: String, required: true},
       password: {type: String, required: true},
-      role: {type: String}
+      role: {type: String},
+      companyName: {type: String},
+      industry: {type: String},
+      activeRoom: {type: String}
   });
 
   userSchema.pre('save', function(next)  {

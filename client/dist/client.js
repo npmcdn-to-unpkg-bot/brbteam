@@ -53,6 +53,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         data: { pageTitle: 'Interview room' }
     }).state('index.settings', {
         url: "/settings",
+        controller: 'SettingsController',
+        controllerAs: 'vm',
         templateUrl: "app/main/settings/settings.html"
     });
 }
@@ -142,13 +144,25 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       return $http.post('/api/room/new', data);
     };
 
+    var getUser = function getUser(name) {
+      return $http.get('/api/user/' + name);
+    };
+
+    var updateUser = function updateUser(name, data) {
+      return $http.put('/api/user/' + name, data);
+    };
+
     return {
       // Questions
       addQuestion: addQuestion,
       searchQuestion: searchQuestion,
 
       // Rooms
-      addRoom: addRoom
+      addRoom: addRoom,
+
+      // Users
+      getUser: getUser,
+      updateUser: updateUser
     };
   }
 })();
@@ -661,6 +675,41 @@ $(function () {
         vm.foundQuestions = response;
       }).error(function (response) {
         console.log("Error while searching questions");
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
+
+  angular.module('brbteam').controller('SettingsController', SettingsController);
+
+  SettingsController.$inject = ['ResourceService', '$log', 'AuthService'];
+
+  function SettingsController(ResourceService, $log, AuthService) {
+    var vm = this;
+
+    // Data
+    vm.userSettings = {};
+    vm.username = AuthService.currentUser().username;
+
+    ResourceService.getUser(vm.username).success(function (data) {
+      $log.info(data);
+      vm.userSettings = data.msg[0];
+    });
+
+    // Functions
+    vm.saveUser = saveUser;
+
+    function saveUser() {
+      $log.info(vm.userSettings);
+
+      ResourceService.updateUser(vm.username, vm.userSettings).success(function (response) {
+        $log.info("User updated");
+        alert("Updated");
+      }).error(function (response) {
+        $log.info("Error while updating user");
       });
     }
   }

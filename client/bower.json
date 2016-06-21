@@ -17,6 +17,7 @@
     "angular-ui-codemirror": "^0.3.0",
     "angular-jwt": "^0.0.9",
     "ngstorage": "^0.3.10",
-    "angular-socket-io": "^0.7.0"
+    "angular-socket-io": "^0.7.0",
+    "ngToast": "ngtoast#^2.0.0"
   }
 }

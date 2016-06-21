@@ -52,6 +52,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         })
         .state('index.settings', {
           url: "/settings",
+          controller: 'SettingsController',
+          controllerAs: 'vm',
           templateUrl: "app/main/settings/settings.html",
         });
 

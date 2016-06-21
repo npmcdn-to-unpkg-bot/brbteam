@@ -7,6 +7,7 @@
         'ui.codemirror',
         'angular-jwt',
         'ngStorage',
-        'btford.socket-io'
+        'btford.socket-io',
+      //  'ngToast'
     ])
 })();

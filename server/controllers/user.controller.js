@@ -25,6 +25,36 @@
       });
 
     };
+
+    getUser(req, res) {
+      console.log(req.params.name);
+      User.find({"username" : req.params.name}, (err, user) => {
+        if(err) {
+          res.json({success: false, msg:"User not found"});
+        } else {
+          res.json({success: true, msg: user});
+        }
+
+      })
+    };
+
+    updateUser(req, res) {
+      User.findOne({"username" : req.params.name}, (err, user) => {
+
+        if(err) {
+
+        } else {
+          user.firstName = req.body.firstName;
+          user.lastName = req.body.lastName;
+          user.companyName = req.body.companyName;
+          user.industry = req.body.industry;
+
+          user.save();
+        }
+
+      });
+    }
+
   };
 
 

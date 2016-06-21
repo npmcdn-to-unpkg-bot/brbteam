@@ -19,6 +19,8 @@ const messageCtrl = require('./controllers/message.controller');
 router.get('/addUser', userCtrl.addUser);
 router.post('/user/signup', authCtrl.signUp);
 router.post('/user/login', authCtrl.login);
+router.get('/user/:name', userCtrl.getUser);
+router.put('/user/:name', userCtrl.updateUser);
 
 router.post('/room/new', roomCtrl.addRoom);
 

@@ -23,13 +23,25 @@
       return $http.post('/api/room/new', data);
     }
 
+    let getUser = (name) => {
+      return $http.get('/api/user/' + name);
+    }
+
+    let updateUser = (name, data) => {
+      return $http.put('/api/user/' + name, data);
+    }
+
     return {
       // Questions
       addQuestion : addQuestion,
       searchQuestion : searchQuestion,
 
       // Rooms
-      addRoom : addRoom
+      addRoom : addRoom,
+
+      // Users
+      getUser : getUser,
+      updateUser : updateUser
     }
 
   }
