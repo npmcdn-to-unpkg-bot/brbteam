@@ -559,47 +559,6 @@ $(function () {
 'use strict';
 
 (function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -652,6 +611,47 @@ $(function () {
 
 (function () {
 
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log'];
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
+
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
   InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope'];
@@ -663,6 +663,7 @@ $(function () {
 
     vm.hasRoom = false;
     vm.isAdmin = false;
+    vm.rtcSwitch = false;
 
     var editor = null;
 
@@ -722,6 +723,25 @@ $(function () {
     vm.changeTheme = changeTheme;
     vm.changeMode = changeMode;
     vm.runCode = runCode;
+    vm.enableCamera = function () {
+      loadWebRtc();
+    };
+
+    function loadWebRtc() {
+      var webrtc = new SimpleWebRTC({
+        // the id/element dom element that will hold "our" video
+        localVideoEl: 'localVideo',
+        // the id/element dom element that will hold remote videos
+        remoteVideosEl: 'remotesVideos',
+        // immediately ask for camera access
+        autoRequestMedia: true
+      });
+
+      webrtc.on('readyToCall', function () {
+        // you can name it anything
+        webrtc.joinRoom(vm.currRoomName);
+      });
+    }
 
     function connectToRoom() {
       // connect to the current room

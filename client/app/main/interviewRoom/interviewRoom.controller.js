@@ -12,6 +12,7 @@
 
     vm.hasRoom = false;
     vm.isAdmin = false;
+    vm.rtcSwitch = false;
 
     let editor = null;
 
@@ -30,6 +31,8 @@
 
       connectToRoom();
       messagesLoad(vm.currRoomName);
+
+
 
       ResourceService.roomAdmin(vm.currRoomName)
       .success((data) => {
@@ -82,6 +85,26 @@
     vm.changeTheme =  changeTheme;
     vm.changeMode = changeMode;
     vm.runCode = runCode;
+    vm.enableCamera = () => {
+        loadWebRtc();
+    }
+
+    function loadWebRtc() {
+      var webrtc = new SimpleWebRTC({
+        // the id/element dom element that will hold "our" video
+        localVideoEl: 'localVideo',
+        // the id/element dom element that will hold remote videos
+        remoteVideosEl: 'remotesVideos',
+        // immediately ask for camera access
+        autoRequestMedia: true
+      });
+
+
+      webrtc.on('readyToCall', function () {
+        // you can name it anything
+        webrtc.joinRoom(vm.currRoomName);
+      });
+    }
 
     function connectToRoom() {
         // connect to the current room
