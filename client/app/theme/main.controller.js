@@ -3,9 +3,9 @@
   angular.module('brbteam').
         controller('MainController', MainController);
 
-  MainController.$inject = ['AuthService'];
+  MainController.$inject = ['AuthService', 'ResourceService'];
 
-  function MainController(AuthService) {
+  function MainController(AuthService, ResourceService) {
     let vm = this;
 
     // Data
@@ -13,7 +13,10 @@
       vm.userName = AuthService.currentUser().username;
     }
 
-
+    ResourceService.activeRoom(vm.userName)
+    .success((response) => {
+      vm.roomName = response.room;
+    });
 
     // Functions
     vm.logout = logout;

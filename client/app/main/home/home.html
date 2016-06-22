@@ -51,7 +51,7 @@
                                   <tr>
                                       <th>#</th>
                                       <th>Room name</th>
-                                      <th>State</th>
+                                      <th>Status</th>
                                       <th></th>
                                   </tr>
                                   </thead>
@@ -59,9 +59,14 @@
                                   <tr ng-repeat="room in vm.roomsList">
                                       <td>{{ $index + 1}}</td>
                                       <td>{{ room.name }}</td>
-                                      <td>{{ room.privateRoom }}</td>
+                                      <td>{{ room.status }}</td>
                                       <td>
-                                        <button class="btn btn-sm btn-primary pull-right" ng-click="vm.joinRoom(room.name)" type="button">
+
+                                        <button ng-if="room.status == 'Active'" class="btn btn-sm btn-primary pull-right" ng-click="vm.joinRoom(room.name)" type="button">
+                                          <strong>Join</strong>
+                                        </button>
+
+                                        <button ng-if="room.status == 'Closed'" class="btn btn-sm btn-primary pull-right" ng-click="vm.joinRoom(room.name)" type="button" disabled>
                                           <strong>Join</strong>
                                         </button>
                                       </td>

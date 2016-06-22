@@ -110,7 +110,7 @@
         vm.codeEditor[msg.line] = vm.codeEditor[msg.line].insertAt(msg.pos, msg.data);
       }
       else if(msg.type == "delete") {
-        vm.codeEditor[msg.line] = vm.codeEditor[msg.line].deleteAt(msg.pos-1, 1);
+        vm.codeEditor[msg.line] = vm.codeEditor[msg.line].deleteAt(msg.pos - 1);
       }
 
 
@@ -187,12 +187,13 @@
       return this.substr(0, index) + string + this.substr(index);
     }
 
-  String.prototype.deleteAt = function(s, e) {
-    return this.slice(s, e) + this.slice(e + 1);
+  String.prototype.deleteAt = function(pos) {
+    //return this.slice(s, e) + this.slice(e + 1);
+    return this.slice(0, pos) + this.slice(pos + 1, this.length);
   }
 
   let st = "Hello";
-  console.log(st.deleteAt(0, 1));
+  console.log(st.deleteAt(0));
 
   }
 

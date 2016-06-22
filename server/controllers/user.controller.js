@@ -64,9 +64,11 @@
         if(err) {
           res.json({success: false, msg:"Error finding users room"});
         } else {
-          res.status(200);
-          console.log({"room": user.activeRoom});
-          res.json({"room": user.activeRoom});
+          if(user) {
+            res.status(200);
+            res.json({"room": user.activeRoom});
+          }
+
         }
 
       });

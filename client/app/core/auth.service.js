@@ -40,7 +40,7 @@
       $http.post('/api/user/signup', data)
         .success((msg) => {
           callback(true);
-          $state.go('index.main');
+          $state.go('login');
         })
         .error((msg) => {
           callback(false);

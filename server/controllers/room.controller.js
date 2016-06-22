@@ -33,7 +33,7 @@
     };
 
     listRooms(req, res) {
-      Room.find({}, (err, rooms) => {
+      Room.find({"privateRoom" : false}, (err, rooms) => {
         if(err) {
           res.json({success: false, msg:"Rooms not found"});
         } else {

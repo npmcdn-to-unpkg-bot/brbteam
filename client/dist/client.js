@@ -101,7 +101,7 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
     function signup(data, callback) {
       $http.post('/api/user/signup', data).success(function (msg) {
         callback(true);
-        $state.go('index.main');
+        $state.go('login');
       }).error(function (msg) {
         callback(false);
       });
@@ -506,15 +506,19 @@ $(function () {
 
   angular.module('brbteam').controller('MainController', MainController);
 
-  MainController.$inject = ['AuthService'];
+  MainController.$inject = ['AuthService', 'ResourceService'];
 
-  function MainController(AuthService) {
+  function MainController(AuthService, ResourceService) {
     var vm = this;
 
     // Data
     if (AuthService.currentUser() !== undefined) {
       vm.userName = AuthService.currentUser().username;
     }
+
+    ResourceService.activeRoom(vm.userName).success(function (response) {
+      vm.roomName = response.room;
+    });
 
     // Functions
     vm.logout = logout;
@@ -716,7 +720,7 @@ $(function () {
       if (msg.type == "input") {
         vm.codeEditor[msg.line] = vm.codeEditor[msg.line].insertAt(msg.pos, msg.data);
       } else if (msg.type == "delete") {
-        vm.codeEditor[msg.line] = vm.codeEditor[msg.line].deleteAt(msg.pos - 1, 1);
+        vm.codeEditor[msg.line] = vm.codeEditor[msg.line].deleteAt(msg.pos - 1);
       }
 
       vm.currentCode = "";
@@ -787,12 +791,13 @@ $(function () {
       return this.substr(0, index) + string + this.substr(index);
     };
 
-    String.prototype.deleteAt = function (s, e) {
-      return this.slice(s, e) + this.slice(e + 1);
+    String.prototype.deleteAt = function (pos) {
+      //return this.slice(s, e) + this.slice(e + 1);
+      return this.slice(0, pos) + this.slice(pos + 1, this.length);
     };
 
     var st = "Hello";
-    console.log(st.deleteAt(0, 1));
+    console.log(st.deleteAt(0));
   }
 })();
 'use strict';
