@@ -412,11 +412,28 @@ function chatSlimScroll($timeout) {
     };
 }
 
+function touchSpin() {
+    return {
+        restrict: 'A',
+        scope: {
+            spinOptions: '='
+        },
+        link: function link(scope, element, attrs) {
+            scope.$watch(scope.spinOptions, function () {
+                render();
+            });
+            var render = function render() {
+                $(element).TouchSpin(scope.spinOptions);
+            };
+        }
+    };
+};
+
 /**
  *
  * Pass all functions into module
  */
-angular.module('brbteam').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('minimalizaSidebar', minimalizaSidebar).directive('chatSlimScroll', chatSlimScroll).directive('iboxToolsFullScreen', iboxToolsFullScreen);
+angular.module('brbteam').directive('pageTitle', pageTitle).directive('sideNavigation', sideNavigation).directive('iboxTools', iboxTools).directive('touchSpin', touchSpin).directive('minimalizaSidebar', minimalizaSidebar).directive('chatSlimScroll', chatSlimScroll).directive('iboxToolsFullScreen', iboxToolsFullScreen);
 "use strict";
 
 /**
@@ -652,6 +669,7 @@ $(function () {
     };
 
     vm.currentCode = "";
+    vm.codeEditor = [];
     vm.currentMsg = "";
     vm.messages = [];
 
@@ -690,16 +708,29 @@ $(function () {
 
     // We are getting what the user typed into the code editor
     SocketService.on("type", function (msg) {
-      $log.info(msg.data);
-      vm.currentCode += msg.data;
+
+      if (vm.codeEditor[msg.line] == undefined) {
+        vm.codeEditor[msg.line] = "";
+      }
+
+      if (msg.type == "input") {
+        vm.codeEditor[msg.line] = vm.codeEditor[msg.line].insertAt(msg.pos, msg.data);
+      } else if (msg.type == "delete") {
+        vm.codeEditor[msg.line] = vm.codeEditor[msg.line].deleteAt(msg.pos - 1, 1);
+      }
+
+      vm.currentCode = "";
+      for (var i = 0; i < vm.codeEditor.length; ++i) {
+        vm.currentCode += vm.codeEditor[i] + "\n";
+      }
     });
 
     function change() {
-      var msg = {};
-      msg.data = vm.currentCode.slice(-1);
-      msg.room = vm.currRoomName;
-
-      SocketService.emit("type", msg);
+      // let msg = {};
+      // msg.data = vm.currentCode.slice(-1);
+      // msg.room = vm.currRoomName;
+      //
+      // SocketService.emit("type", msg);
     }
 
     function sendMsg() {
@@ -730,11 +761,38 @@ $(function () {
       var _doc = _editor.getDoc();
       _editor.focus();
 
+      _editor.setSize(-1, 470);
+
       _editor.on("change", function (e, ch) {
         console.log(ch);
-        console.log(_editor.getCursor());
+
+        var msg = {};
+        msg.data = ch.text[0];
+        msg.room = vm.currRoomName;
+        msg.pos = ch.to.ch;
+        msg.line = ch.to.line;
+
+        console.log(msg);
+        if (ch.origin == "+input") {
+          msg.type = "input";
+          SocketService.emit("type", msg);
+        } else if (ch.origin == "+delete") {
+          msg.type = "delete";
+          SocketService.emit("type", msg);
+        }
       });
     };
+
+    String.prototype.insertAt = function (index, string) {
+      return this.substr(0, index) + string + this.substr(index);
+    };
+
+    String.prototype.deleteAt = function (s, e) {
+      return this.slice(s, e) + this.slice(e + 1);
+    };
+
+    var st = "Hello";
+    console.log(st.deleteAt(0, 1));
   }
 })();
 'use strict';

@@ -8,7 +8,8 @@
       data: msg.data,
       name: msg.name,
       room: msg.room,
-      date: msg.date
+      date: msg.date,
+      state: msg.state
     });
 
     message.save((err) => {
