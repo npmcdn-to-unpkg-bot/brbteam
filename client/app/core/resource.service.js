@@ -39,6 +39,10 @@
       return $http.get('/api/room/' + room + "/admin");
     }
 
+    let executeCode = (data) => {
+      return $http.post('/api/room/execute', data);
+    }
+
     let getUser = (name) => {
       return $http.get('/api/user/' + name);
     }
@@ -67,6 +71,7 @@
       closeRoom : closeRoom,
       joinRoom : joinRoom,
       roomAdmin : roomAdmin,
+      executeCode : executeCode,
 
       // Users
       getUser : getUser,

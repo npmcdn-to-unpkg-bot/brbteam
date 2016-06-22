@@ -1,13 +1,10 @@
 <div class="row wrapper" ng-if="vm.hasRoom">
     <div class="col-lg-9">
-      <div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="vm.currentCode" ng-change="vm.change()" ui-codemirror-opts="vm.editorOptions">
+      <div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="vm.currentCode"  ui-codemirror-opts="vm.editorOptions">
       </div>
     </div>
 
     <div class="col-lg-3">
-      <button class="btn btn-sm btn-danger pull-right " ng-if="vm.isAdmin" ng-click="vm.closeRoom()" type="button">
-        <strong>Close room
-          </strong></button>
 
           <h3>People in room {{ vm.currRoomName }}</h3>
       <div class="chat-users">
@@ -29,20 +26,14 @@
     <div class="col-lg-9 white-bg">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Console output</h5>
+                        <!-- <h5>Console output</h5> -->
                         <div ibox-tools></div>
-                        <!-- <select class="form-control m-b" name="account">
-                                        <option>option 1</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                    </select> -->
-
+                        <button class="btn btn-primary" ng-click="vm.runCode()">Run {{ vm.selectedLang }}</button>
                     </div>
                     <div class="ibox-content">
-                        <div slim-scroll box-height="40px">
+                        <div chat-slim-scroll box-height="40px">
                           <ul>
-                            <li>> You can see the output here</li>
+                            <li ng-repeat="msg in vm.consoleMessages track by $index" >>  {{ msg }}</li>
                           </ul>
                         </div>
                     </div>
@@ -135,53 +126,26 @@
         <div class="skin-setttings">
             <div class="title">Configuration</div>
             <div class="setings-item">
-                    <span>
-                        Collapse menu
-                    </span>
 
-                <div class="switch">
-                    <div class="onoffswitch">
-                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="collapsemenu">
-                        <label class="onoffswitch-label" for="collapsemenu">
-                            <span class="onoffswitch-inner"></span>
-                            <span class="onoffswitch-switch"></span>
-                        </label>
-                    </div>
-                </div>
+
+                    <button class="btn btn-sm btn-danger pull-right " ng-if="vm.isAdmin" ng-click="vm.closeRoom()" type="button">
+                      <strong>Close room
+                        </strong>
+                      </button>
             </div>
             <div class="setings-item">
                     <span>
-                        Fixed sidebar
+                        Language
                     </span>
 
-                <div class="switch">
-                    <div class="onoffswitch">
-                        <input type="checkbox" name="fixedsidebar" class="onoffswitch-checkbox" id="fixedsidebar">
-                        <label class="onoffswitch-label" for="fixedsidebar">
-                            <span class="onoffswitch-inner"></span>
-                            <span class="onoffswitch-switch"></span>
-                        </label>
-                    </div>
-                </div>
+                    <select class="form-control m-b" ng-model="vm.selectedLang" ng-change="vm.changeMode()">
+                      <option ng-repeat="lang in vm.languages">{{ lang }}</option>
+                    </select>
             </div>
-            <div class="setings-item">
-                    <span>
-                        Top navbar
-                    </span>
 
-                <div class="switch">
-                    <div class="onoffswitch">
-                        <input type="checkbox" name="fixednavbar" class="onoffswitch-checkbox" id="fixednavbar">
-                        <label class="onoffswitch-label" for="fixednavbar">
-                            <span class="onoffswitch-inner"></span>
-                            <span class="onoffswitch-switch"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="setings-item">
+            <!-- <div class="setings-item">
                     <span>
-                        Boxed layout
+                        Settings 1
                     </span>
 
                 <div class="switch">
@@ -196,7 +160,7 @@
             </div>
             <div class="setings-item">
                     <span>
-                        Fixed footer
+                        Settings 2
                     </span>
 
                 <div class="switch">
@@ -208,28 +172,35 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="title">Skins</div>
+            <div class="title">Themes</div>
             <div class="setings-item default-skin">
                     <span class="skin-name ">
-                         <a class="s-skin-0">
-                             Default
+                         <a class="s-skin-0" ng-click="vm.changeTheme('ambiance')">
+                             Ambiance
                          </a>
                     </span>
             </div>
             <div class="setings-item blue-skin">
                     <span class="skin-name ">
-                        <a  class="s-skin-1">
-                            Blue light
+                        <a  class="s-skin-1" ng-click="vm.changeTheme('cobalt')">
+                            Cobalt
                         </a>
                     </span>
             </div>
-            <div class="setings-item yellow-skin">
+            <div class="setings-item yellow-skin" ng-click="vm.changeTheme('bespin')">
                     <span class="skin-name ">
                         <a  class="s-skin-3">
-                            Yellow/Purple
+                            Bespin
                         </a>
+                    </span>
+            </div>
+            <div class="setings-item default-skin" ng-click="vm.changeTheme('twilight')">
+                    <span class="skin-name ">
+                         <a class="s-skin-0">
+                             Twilight
+                         </a>
                     </span>
             </div>
         </div>

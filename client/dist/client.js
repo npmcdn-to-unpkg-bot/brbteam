@@ -183,6 +183,10 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       return $http.get('/api/room/' + room + "/admin");
     };
 
+    var executeCode = function executeCode(data) {
+      return $http.post('/api/room/execute', data);
+    };
+
     var getUser = function getUser(name) {
       return $http.get('/api/user/' + name);
     };
@@ -210,6 +214,7 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       closeRoom: closeRoom,
       joinRoom: joinRoom,
       roomAdmin: roomAdmin,
+      executeCode: executeCode,
 
       // Users
       getUser: getUser,
@@ -554,6 +559,47 @@ $(function () {
 'use strict';
 
 (function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log'];
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -618,6 +664,11 @@ $(function () {
     vm.hasRoom = false;
     vm.isAdmin = false;
 
+    var editor = null;
+
+    vm.languages = ["javascript", "ruby", "python", "php"];
+    vm.selectedLang = "javascript";
+
     ResourceService.activeRoom(vm.currentUser).success(function (response) {
       $log.info(response);
       vm.currRoomName = response.room;
@@ -648,16 +699,17 @@ $(function () {
     // Data
     vm.editorOptions = {
       lineNumbers: true,
-      theme: 'twilight',
+      theme: 'ambiance',
       lineWrapping: true,
       height: 500,
-      mode: 'javascript'
+      mode: 'ruby'
     };
 
     vm.currentCode = "";
     vm.codeEditor = [];
     vm.currentMsg = "";
     vm.messages = [];
+    vm.consoleMessages = [];
 
     vm.users = [];
     vm.users.push(vm.currentUser);
@@ -665,9 +717,11 @@ $(function () {
     console.log(vm.currRoomName);
 
     // Functions
-    vm.change = change;
     vm.sendMsg = sendMsg;
     vm.closeRoom = closeRoom;
+    vm.changeTheme = changeTheme;
+    vm.changeMode = changeMode;
+    vm.runCode = runCode;
 
     function connectToRoom() {
       // connect to the current room
@@ -711,12 +765,19 @@ $(function () {
       }
     });
 
-    function change() {
-      // let msg = {};
-      // msg.data = vm.currentCode.slice(-1);
-      // msg.room = vm.currRoomName;
-      //
-      // SocketService.emit("type", msg);
+    function changeTheme(theme) {
+      editor.setOption('theme', theme);
+    }
+
+    function changeMode() {
+      var mode = vm.selectedLang;
+
+      if (vm.selectedLang == 'c#' || vm.selectedLang == 'c++' || vm.selectedLang == 'java') {
+        mode = "clike";
+      }
+
+      $log.info(mode);
+      editor.setOption('mode', mode);
     }
 
     function sendMsg() {
@@ -730,7 +791,6 @@ $(function () {
       vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
-      $log.info("msg sent to server to send to other clients");
       vm.currentMsg = "";
     }
 
@@ -742,12 +802,26 @@ $(function () {
       });
     }
 
+    function runCode(req, res) {
+
+      var data = {};
+      data.code = vm.currentCode;
+      data.type = vm.selectedLang;
+      $log.info(data);
+
+      ResourceService.executeCode(data).success(function (response) {
+        vm.consoleMessages.push(response.stdout);
+      });
+    }
+
     $scope.codemirrorLoaded = function (_editor) {
 
       var _doc = _editor.getDoc();
       _editor.focus();
 
       _editor.setSize(-1, 470);
+
+      editor = _editor;
 
       _editor.on("change", function (e, ch) {
         console.log(ch);
@@ -777,50 +851,6 @@ $(function () {
       //return this.slice(s, e) + this.slice(e + 1);
       return this.slice(0, pos) + this.slice(pos + 1, this.length);
     };
-
-    var st = "Hello";
-    console.log(st.deleteAt(0));
-  }
-})();
-'use strict';
-
-(function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
-    }
   }
 })();
 'use strict';

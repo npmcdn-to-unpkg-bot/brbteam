@@ -33,6 +33,6 @@ router.get('/room/:room/admin', roomCtrl.roomAdmin);
 
 router.get('/messages/:room', messageCtrl.messagesInRoom);
 
-messageCtrl.test;
+router.post('/room/execute', roomCtrl.executeCode);
 
 module.exports = router;

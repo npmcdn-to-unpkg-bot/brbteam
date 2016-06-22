@@ -13,6 +13,11 @@
     vm.hasRoom = false;
     vm.isAdmin = false;
 
+    let editor = null;
+
+    vm.languages = ["javascript", "ruby", "python", "php"];
+    vm.selectedLang = "javascript";
+
     ResourceService.activeRoom(vm.currentUser)
     .success((response) => {
       $log.info(response);
@@ -54,16 +59,17 @@
     // Data
     vm.editorOptions = {
       lineNumbers: true,
-      theme:'twilight',
+      theme:'ambiance',
       lineWrapping : true,
        height: 500,
-      mode : 'javascript'
+      mode : 'ruby'
     };
 
     vm.currentCode = "";
     vm.codeEditor = [];
     vm.currentMsg = "";
     vm.messages = [];
+    vm.consoleMessages = [];
 
     vm.users = [];
     vm.users.push(vm.currentUser);
@@ -71,9 +77,11 @@
     console.log(vm.currRoomName);
 
     // Functions
-    vm.change = change;
     vm.sendMsg = sendMsg;
     vm.closeRoom = closeRoom;
+    vm.changeTheme =  changeTheme;
+    vm.changeMode = changeMode;
+    vm.runCode = runCode;
 
     function connectToRoom() {
         // connect to the current room
@@ -121,12 +129,19 @@
 
     });
 
-    function change()  {
-      // let msg = {};
-      // msg.data = vm.currentCode.slice(-1);
-      // msg.room = vm.currRoomName;
-      //
-      // SocketService.emit("type", msg);
+    function changeTheme(theme)  {
+      editor.setOption('theme', theme);
+    }
+
+    function changeMode() {
+      let mode = vm.selectedLang;
+
+      if(vm.selectedLang == 'c#' || vm.selectedLang == 'c++' || vm.selectedLang == 'java') {
+        mode = "clike";
+      }
+
+      $log.info(mode);
+      editor.setOption('mode', mode);
     }
 
     function sendMsg() {
@@ -140,7 +155,6 @@
       vm.messages.push(msg);
 
       SocketService.emit('msg', msg);
-      $log.info("msg sent to server to send to other clients");
       vm.currentMsg = "";
     }
 
@@ -153,12 +167,28 @@
       });
     }
 
+    function runCode(req, res) {
+
+        let data = {};
+        data.code = vm.currentCode;
+        data.type = vm.selectedLang;
+        $log.info(data);
+
+        ResourceService.executeCode(data)
+        .success((response) => {
+          vm.consoleMessages.push(response.stdout);
+        });
+
+    }
+
     $scope.codemirrorLoaded = function(_editor){
 
       var _doc = _editor.getDoc();
       _editor.focus();
 
       _editor.setSize(-1, 470);
+
+      editor = _editor;
 
       _editor.on("change", function(e, ch){
         console.log(ch);
@@ -192,8 +222,6 @@
     return this.slice(0, pos) + this.slice(pos + 1, this.length);
   }
 
-  let st = "Hello";
-  console.log(st.deleteAt(0));
 
   }
 
