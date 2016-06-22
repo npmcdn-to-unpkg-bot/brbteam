@@ -58,7 +58,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
         templateUrl: "app/main/settings/settings.html"
     });
 }
-angular.module('brbteam').config(config).run(function ($rootScope, $state) {
+angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthService) {
+
+    $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams) {
+
+        // if we go to login/register and are already logged in
+        if ((toState.name == "login" || toState.name == "register") && AuthService.isLogedIn()) {
+            $state.go("index.main");
+        }
+
+        // if we go to restricted urls but are not logged in
+        if ((toState.name == "index.main" || toState.name == "index.myroom" || toState.name == "index.settings" || toState.name == "index.questions") && !AuthService.isLogedIn()) {
+            $state.go("login");
+        }
+    });
+
     $rootScope.$state = $state;
 });
 'use strict';
@@ -111,11 +125,20 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state) {
       return $localStorage.currentUser;
     }
 
+    function isLogedIn() {
+      if ($localStorage.currentUser) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     return {
       login: login,
       logout: logout,
       signup: signup,
-      currentUser: currentUser
+      currentUser: currentUser,
+      isLogedIn: isLogedIn
     };
   }
 })();
@@ -531,47 +554,6 @@ $(function () {
 'use strict';
 
 (function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -798,6 +780,47 @@ $(function () {
 
     var st = "Hello";
     console.log(st.deleteAt(0));
+  }
+})();
+'use strict';
+
+(function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log'];
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
   }
 })();
 'use strict';

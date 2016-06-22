@@ -61,6 +61,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
 angular
     .module('brbteam')
     .config(config)
-    .run(function($rootScope, $state) {
+    .run(function($rootScope, $state, AuthService) {
+
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams) {
+
+          // if we go to login/register and are already logged in
+          if((toState.name == "login" || toState.name == "register")  && AuthService.isLogedIn()) {
+            $state.go("index.main");
+          }
+
+          // if we go to restricted urls but are not logged in
+          if((toState.name == "index.main" || toState.name == "index.myroom" || toState.name == "index.settings"
+             || toState.name == "index.questions")
+           && !AuthService.isLogedIn()) {
+            $state.go("login");
+          }
+
+        });
+
         $rootScope.$state = $state;
+
     });

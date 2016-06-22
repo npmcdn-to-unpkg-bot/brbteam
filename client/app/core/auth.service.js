@@ -51,11 +51,20 @@
       return $localStorage.currentUser;
     }
 
+    function isLogedIn() {
+      if($localStorage.currentUser) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     return {
       login : login,
       logout : logout,
       signup : signup,
-      currentUser : currentUser
+      currentUser : currentUser,
+      isLogedIn : isLogedIn
     }
 
   }
