@@ -30,7 +30,8 @@ router.get('/room/list', roomCtrl.listRooms);
 router.post('/room/:name/close', roomCtrl.closeRoom);
 router.put('/room/:room/join/:user', roomCtrl.joinRoom);
 router.get('/room/:room/admin', roomCtrl.roomAdmin);
-router.put('/room/:user/leave', roomCtrl.leaveRoom);
+router.put('/room/:room/leave/:user', roomCtrl.leaveRoom);
+router.get('/room/:room/users', roomCtrl.usersInRoom);
 
 router.get('/messages/:room', messageCtrl.messagesInRoom);
 

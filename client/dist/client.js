@@ -179,8 +179,11 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       return $http.put('/api/room/' + room + "/join/" + user);
     };
 
-    var leaveRoom = function leaveRoom(user) {
-      return $http.put('/api/room/' + user + "/leave");
+    var leaveRoom = function leaveRoom(user, room) {
+      return $http.put('/api/room/' + room + "/leave/" + user);
+    };
+    var usersInRoom = function usersInRoom(room) {
+      return $http.get('/api/room/' + room + "/users");
     };
 
     var roomAdmin = function roomAdmin(room) {
@@ -218,6 +221,7 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       closeRoom: closeRoom,
       joinRoom: joinRoom,
       leaveRoom: leaveRoom,
+      usersInRoom: usersInRoom,
       roomAdmin: roomAdmin,
       executeCode: executeCode,
 
@@ -564,6 +568,47 @@ $(function () {
 'use strict';
 
 (function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log'];
+
+  function AuthController(AuthService, $log) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          $log.info('Login failed');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          $log.info('Signup failed');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -616,47 +661,6 @@ $(function () {
 
 (function () {
 
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
-
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
   InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope'];
@@ -669,6 +673,7 @@ $(function () {
     vm.hasRoom = false;
     vm.isAdmin = false;
     vm.rtcSwitch = false;
+    vm.users = [];
 
     var editor = null;
 
@@ -686,6 +691,15 @@ $(function () {
 
       connectToRoom();
       messagesLoad(vm.currRoomName);
+
+      ResourceService.usersInRoom(vm.currRoomName).success(function (response) {
+
+        angular.forEach(response, function (v, k) {
+          if (vm.users.indexOf(v) === -1) {
+            vm.users.push(v);
+          }
+        });
+      });
 
       ResourceService.roomAdmin(vm.currRoomName).success(function (data) {
         if (data.admin === vm.currentUser) {
@@ -716,11 +730,6 @@ $(function () {
     vm.currentMsg = "";
     vm.messages = [];
     vm.consoleMessages = [];
-
-    vm.users = [];
-    vm.users.push(vm.currentUser);
-
-    console.log(vm.currRoomName);
 
     // Functions
     vm.sendMsg = sendMsg;
@@ -770,7 +779,17 @@ $(function () {
 
     // When a user has joined the room
     SocketService.on("adduser", function (user) {
-      vm.users.push(user);
+      if (vm.users.indexOf(user) === -1) {
+        vm.users.push(user);
+      }
+    });
+
+    SocketService.on('leftroom', function (msg) {
+      var index = vm.users.indexOf(msg.user);
+
+      if (index !== -1) {
+        vm.users.splice(index, 1);
+      }
     });
 
     // We are getting what the user typed into the code editor
@@ -808,7 +827,8 @@ $(function () {
     }
 
     function leaveRoom() {
-      ResourceService.leaveRoom(vm.currentUser).success(function (response) {
+      ResourceService.leaveRoom(vm.currentUser, vm.currRoomName).success(function (response) {
+        SocketService.emit('leftroom', { "user": vm.currentUser, "room": vm.currRoomName });
         $state.go("index.main");
       }).error(function (response) {
         $log.info("Failed to leave the room");

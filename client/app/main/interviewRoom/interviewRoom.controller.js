@@ -13,6 +13,7 @@
     vm.hasRoom = false;
     vm.isAdmin = false;
     vm.rtcSwitch = false;
+    vm.users = [];
 
     let editor = null;
 
@@ -32,7 +33,16 @@
       connectToRoom();
       messagesLoad(vm.currRoomName);
 
+      ResourceService.usersInRoom(vm.currRoomName)
+      .success((response) => {
 
+        angular.forEach(response, (v, k) => {
+          if(vm.users.indexOf(v) === -1) {
+            vm.users.push(v);
+          }
+
+        });
+      });
 
       ResourceService.roomAdmin(vm.currRoomName)
       .success((data) => {
@@ -73,11 +83,6 @@
     vm.currentMsg = "";
     vm.messages = [];
     vm.consoleMessages = [];
-
-    vm.users = [];
-    vm.users.push(vm.currentUser);
-
-    console.log(vm.currRoomName);
 
     // Functions
     vm.sendMsg = sendMsg;
@@ -127,7 +132,18 @@
 
     // When a user has joined the room
     SocketService.on("adduser", (user) => {
-      vm.users.push(user);
+      if(vm.users.indexOf(user) === -1) {
+        vm.users.push(user);
+      }
+
+    });
+
+    SocketService.on('leftroom', (msg) => {
+      let index = vm.users.indexOf(msg.user);
+
+      if(index !== -1) {
+        vm.users.splice(index, 1);
+      }
     });
 
     // We are getting what the user typed into the code editor
@@ -168,8 +184,9 @@
     }
 
     function leaveRoom() {
-      ResourceService.leaveRoom(vm.currentUser)
+      ResourceService.leaveRoom(vm.currentUser, vm.currRoomName)
       .success((response) => {
+        SocketService.emit('leftroom', {"user" : vm.currentUser, "room" : vm.currRoomName});
         $state.go("index.main");
       })
       .error((response) => {

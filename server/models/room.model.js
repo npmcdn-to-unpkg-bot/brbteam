@@ -7,7 +7,7 @@
     name: {type: String, required: true},
     privateRoom: {type: Boolean, required: true},
     admin: {type: String},
-    interviewies: [userSchema],
+    interviewies: [{type: String}],
     status: {type: String}
   });
 

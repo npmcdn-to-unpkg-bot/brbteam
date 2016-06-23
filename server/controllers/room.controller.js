@@ -22,6 +22,8 @@
         user.activeRoom = req.body.name;
         user.save();
 
+        room.interviewies.push(req.body.admin);
+
         room.save((err) => {
           if(err) {
             console.log(err);
@@ -74,24 +76,37 @@
 
     leaveRoom(req, res) {
 
-      console.log(req.params.user);
-
-      User.findOne({"username" :  req.params.user}, (err, user) => {
+      Room.findOne({"name" : req.params.room}, (err, room) => {
         if(err) {
-          res.json({success: false, msg:"User not found"});
+          res.json({success: false, msg:"Room not found"});
         } else {
-          user.activeRoom = "";
+          let index = room.interviewies.indexOf(req.params.user);
 
-          user.save((err) => {
+          if(index !== -1) {
+            room.interviewies.splice(index, 1);
+            room.save();
+          }
+
+          User.findOne({"username" :  req.params.user}, (err, user) => {
             if(err) {
-              res.json({success: false, msg:"User not saved"});
+              res.json({success: false, msg:"User not found"});
             } else {
-              res.json({success: true, msg:"User left the room"});
-            }
-          });
-        }
+              user.activeRoom = "";
 
+              user.save((err) => {
+                if(err) {
+                  res.json({success: false, msg:"User not saved"});
+                } else {
+                  res.json({success: true, msg:"User left the room"});
+                }
+              });
+            }
+
+          });
+
+        }
       });
+
     }
 
     roomAdmin(req, res) {
@@ -111,23 +126,44 @@
       let roomName = req.params.room;
       let userName = req.params.user;
 
-      console.log("Wut m8?");
-      console.log(roomName + " " + userName);
-
-      User.findOne({"username" :  userName}, (err, user) => {
+      Room.findOne({"name" : req.params.room}, (err, room) => {
 
         if(err) {
-          res.json({success: false, msg:"Error finding room"});
+          res.json({success: false, msg:"Room not found"});
         } else {
-          user.activeRoom = roomName;
+          room.interviewies.push(req.params.user);
 
-          user.save((err) => {
-            res.json({success: true, msg:"Joined room"});
+          room.save();
+
+          User.findOne({"username" :  userName}, (err, user) => {
+
+            if(err) {
+              res.json({success: false, msg:"Error finding room"});
+            } else {
+              user.activeRoom = roomName;
+
+              user.save((err) => {
+                res.json({success: true, msg:"Joined room"});
+              });
+            }
+
           });
         }
 
       });
 
+    }
+
+    usersInRoom(req, res) {
+      Room.findOne({"name" : req.params.room}, (err, room) => {
+
+        if(err) {
+          res.json({success: false, msg:"Room not found"});
+        } else {
+          res.status(200);
+          res.json(room.interviewies);
+        }
+      });
     }
 
     executeCode(req, res) {

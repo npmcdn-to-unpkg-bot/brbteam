@@ -12,9 +12,7 @@
       state: msg.state
     });
 
-    message.save((err) => {
-
-    });
+    message.save();
   }
 
   module.exports = function(io) {
@@ -35,6 +33,10 @@
       socket.on('msg', (msg) => {
         saveMsg(msg);
         socket.broadcast.to(msg.room).emit('msg', msg);
+      });
+
+      socket.on('leftroom', (msg) => {
+        socket.broadcast.to(msg.room).emit('leftroom', msg);
       });
 
     });
