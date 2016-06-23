@@ -3,9 +3,9 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope', 'ngAudio'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope', 'ngAudio', 'toastr'];
 
-  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope, ngAudio) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope, ngAudio, toastr) {
     let vm = this;
 
     vm.currentUser = AuthService.currentUser().username;

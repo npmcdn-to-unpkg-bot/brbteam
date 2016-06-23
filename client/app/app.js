@@ -8,6 +8,8 @@
         'angular-jwt',
         'ngStorage',
         'btford.socket-io',
-        'ngAudio'
+        'ngAudio',
+      //  'ngAnimate',
+        'toastr'
     ])
 })();

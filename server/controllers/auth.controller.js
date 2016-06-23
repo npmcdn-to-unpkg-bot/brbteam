@@ -9,8 +9,8 @@
     signUp(req, res)
     {
 
-      if(!req.body.username || !req.body.password) {
-        res.json({success: false, msg:"Enter username and passowrd"});
+      if(!req.body.username || !req.body.password || !req.body.email) {
+        res.json({success: false, msg:"Enter username and passowrd and a valid email"});
       } else {
 
         let user = new User(req.body);

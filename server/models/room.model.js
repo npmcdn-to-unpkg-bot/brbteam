@@ -4,7 +4,7 @@
   let userSchema = require('mongoose').model('User').schema;
 
   let roomSchema = new mongoose.Schema({
-    name: {type: String, required: true},
+    name: {type: String, required: true, unique: true},
     privateRoom: {type: Boolean, required: true},
     admin: {type: String},
     interviewies: [{type: String}],

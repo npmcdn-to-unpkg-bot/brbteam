@@ -3,9 +3,9 @@
   angular.module('brbteam')
          .controller('AuthController', AuthController);
 
-  AuthController.$inject = ['AuthService', '$log'];
+  AuthController.$inject = ['AuthService', '$log', 'toastr'];
 
-  function AuthController(AuthService, $log) {
+  function AuthController(AuthService, $log, toastr) {
     let vm = this;
 
     // Data
@@ -17,22 +17,22 @@
     vm.signup = signup;
 
     function login() {
-      AuthService.login(vm.loginData, (success) => {
+      AuthService.login(vm.loginData, (success, msg) => {
         if(success) {
           $log.info('Succesfull login');
         } else {
-          $log.info('Login failed');
+          toastr.error(msg, 'Error');
         }
       });
     }
 
     function signup() {
 
-      AuthService.signup(vm.signupData, (success) => {
+      AuthService.signup(vm.signupData, (success, msg) => {
         if(success) {
           $log.info('Succesfull signup');
         } else {
-          $log.info('Signup failed');
+            toastr.error(msg, 'Error');
         }
       });
 

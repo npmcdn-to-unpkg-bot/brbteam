@@ -21,11 +21,11 @@
 
            $http.defaults.headers.common.Authorization = response.token;
            // callback za uspesan login
-           callback(true);
+           callback(true, response.msg);
            $state.go('index.main');
        } else {
            // callback za neuspesan login
-           callback(false);
+           callback(false, response.msg);
        }
       });
     }
@@ -38,12 +38,17 @@
 
     function signup(data, callback) {
       $http.post('/api/user/signup', data)
-        .success((msg) => {
-          callback(true);
-          $state.go('login');
+        .success((response) => {
+          if(response.success) {
+            callback(true, response.msg);
+            $state.go('login');
+          } else {
+            callback(false, response.msg);
+          }
+
         })
-        .error((msg) => {
-          callback(false);
+        .error((response) => {
+          callback(false, response.msg);
         });
     }
 

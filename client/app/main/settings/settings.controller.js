@@ -3,9 +3,9 @@
   angular.module('brbteam')
          .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['ResourceService', '$log', 'AuthService'];
+  SettingsController.$inject = ['ResourceService', '$log', 'AuthService', 'toastr'];
 
-  function SettingsController(ResourceService, $log, AuthService) {
+  function SettingsController(ResourceService, $log, AuthService, toastr) {
     let vm = this;
 
     // Data
@@ -24,11 +24,12 @@
 
     function saveUser() {
       $log.info(vm.userSettings);
+        toastr.success('User setting saved', '');
 
       ResourceService.updateUser(vm.username, vm.userSettings)
       .success((response) => {
         $log.info("User updated");
-        alert("Updated");
+
       })
       .error((response) => {
         $log.info("Error while updating user");

@@ -4,7 +4,9 @@
     angular.module('brbteam', ['ui.router', // Routing
     'oc.lazyLoad', // ocLazyLoad
     'ui.bootstrap', // Ui Bootstrap
-    'ui.codemirror', 'angular-jwt', 'ngStorage', 'btford.socket-io', 'ngAudio']);
+    'ui.codemirror', 'angular-jwt', 'ngStorage', 'btford.socket-io', 'ngAudio',
+    //  'ngAnimate',
+    'toastr']);
 })();
 "use strict";
 
@@ -97,11 +99,11 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
 
           $http.defaults.headers.common.Authorization = response.token;
           // callback za uspesan login
-          callback(true);
+          callback(true, response.msg);
           $state.go('index.main');
         } else {
           // callback za neuspesan login
-          callback(false);
+          callback(false, response.msg);
         }
       });
     }
@@ -113,11 +115,15 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
     }
 
     function signup(data, callback) {
-      $http.post('/api/user/signup', data).success(function (msg) {
-        callback(true);
-        $state.go('login');
-      }).error(function (msg) {
-        callback(false);
+      $http.post('/api/user/signup', data).success(function (response) {
+        if (response.success) {
+          callback(true, response.msg);
+          $state.go('login');
+        } else {
+          callback(false, response.msg);
+        }
+      }).error(function (response) {
+        callback(false, response.msg);
       });
     }
 
@@ -579,47 +585,6 @@ $(function () {
 'use strict';
 
 (function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log'];
-
-  function AuthController(AuthService, $log) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          $log.info('Login failed');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          $log.info('Signup failed');
-        }
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -672,11 +637,52 @@ $(function () {
 
 (function () {
 
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log', 'toastr'];
+
+  function AuthController(AuthService, $log, toastr) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success, msg) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          toastr.error(msg, 'Error');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success, msg) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          toastr.error(msg, 'Error');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
+
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope', 'ngAudio'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope', 'ngAudio', 'toastr'];
 
-  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope, ngAudio) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope, ngAudio, toastr) {
     var vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
@@ -1005,9 +1011,9 @@ $(function () {
 
   angular.module('brbteam').controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['ResourceService', '$log', 'AuthService'];
+  SettingsController.$inject = ['ResourceService', '$log', 'AuthService', 'toastr'];
 
-  function SettingsController(ResourceService, $log, AuthService) {
+  function SettingsController(ResourceService, $log, AuthService, toastr) {
     var vm = this;
 
     // Data
@@ -1024,10 +1030,10 @@ $(function () {
 
     function saveUser() {
       $log.info(vm.userSettings);
+      toastr.success('User setting saved', '');
 
       ResourceService.updateUser(vm.username, vm.userSettings).success(function (response) {
         $log.info("User updated");
-        alert("Updated");
       }).error(function (response) {
         $log.info("Error while updating user");
       });
