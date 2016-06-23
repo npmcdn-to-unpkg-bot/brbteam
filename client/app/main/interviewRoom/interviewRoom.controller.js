@@ -85,9 +85,9 @@
     vm.changeTheme =  changeTheme;
     vm.changeMode = changeMode;
     vm.runCode = runCode;
-    vm.enableCamera = () => {
-        loadWebRtc();
-    }
+    vm.leaveRoom = leaveRoom;
+
+    vm.enableCamera = () => { loadWebRtc(); }
 
     function loadWebRtc() {
       var webrtc = new SimpleWebRTC({
@@ -165,6 +165,16 @@
 
       $log.info(mode);
       editor.setOption('mode', mode);
+    }
+
+    function leaveRoom() {
+      ResourceService.leaveRoom(vm.currentUser)
+      .success((response) => {
+        $state.go("index.main");
+      })
+      .error((response) => {
+        $log.info("Failed to leave the room");
+      });
     }
 
     function sendMsg() {

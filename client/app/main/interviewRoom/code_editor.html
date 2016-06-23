@@ -9,7 +9,7 @@
       <video height="300" id="localVideo" ng-if="vm.rtcSwitch"></video>
        <div id="remotesVideos" ng-if="vm.rtcSwitch"></div>
 
-          <h3>People in room {{ vm.currRoomName }}</h3>
+          <h3>People in room ({{ vm.currRoomName }})</h3>
       <div class="chat-users">
 
           <div class="users-list">
@@ -135,6 +135,11 @@
                       <strong>Close room
                         </strong>
                       </button>
+
+                      <button class="btn btn-sm btn-danger pull-right " ng-if="!vm.isAdmin" ng-click="vm.leaveRoom()" type="button">
+                        <strong>Leave room
+                          </strong>
+                        </button>
             </div>
             <div class="setings-item">
                     <span>

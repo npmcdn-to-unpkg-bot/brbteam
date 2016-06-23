@@ -35,6 +35,10 @@
       return $http.put('/api/room/' + room + "/join/" + user);
     }
 
+    let leaveRoom = (user) => {
+      return $http.put('/api/room/' + user + "/leave");
+    }
+
     let roomAdmin = (room) => {
       return $http.get('/api/room/' + room + "/admin");
     }
@@ -70,6 +74,7 @@
       listRooms : listRooms,
       closeRoom : closeRoom,
       joinRoom : joinRoom,
+      leaveRoom : leaveRoom,
       roomAdmin : roomAdmin,
       executeCode : executeCode,
 

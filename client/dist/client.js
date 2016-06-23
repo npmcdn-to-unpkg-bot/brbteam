@@ -179,6 +179,10 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       return $http.put('/api/room/' + room + "/join/" + user);
     };
 
+    var leaveRoom = function leaveRoom(user) {
+      return $http.put('/api/room/' + user + "/leave");
+    };
+
     var roomAdmin = function roomAdmin(room) {
       return $http.get('/api/room/' + room + "/admin");
     };
@@ -213,6 +217,7 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       listRooms: listRooms,
       closeRoom: closeRoom,
       joinRoom: joinRoom,
+      leaveRoom: leaveRoom,
       roomAdmin: roomAdmin,
       executeCode: executeCode,
 
@@ -723,6 +728,8 @@ $(function () {
     vm.changeTheme = changeTheme;
     vm.changeMode = changeMode;
     vm.runCode = runCode;
+    vm.leaveRoom = leaveRoom;
+
     vm.enableCamera = function () {
       loadWebRtc();
     };
@@ -798,6 +805,14 @@ $(function () {
 
       $log.info(mode);
       editor.setOption('mode', mode);
+    }
+
+    function leaveRoom() {
+      ResourceService.leaveRoom(vm.currentUser).success(function (response) {
+        $state.go("index.main");
+      }).error(function (response) {
+        $log.info("Failed to leave the room");
+      });
     }
 
     function sendMsg() {

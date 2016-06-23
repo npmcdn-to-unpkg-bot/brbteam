@@ -72,6 +72,28 @@
       });
     }
 
+    leaveRoom(req, res) {
+
+      console.log(req.params.user);
+
+      User.findOne({"username" :  req.params.user}, (err, user) => {
+        if(err) {
+          res.json({success: false, msg:"User not found"});
+        } else {
+          user.activeRoom = "";
+
+          user.save((err) => {
+            if(err) {
+              res.json({success: false, msg:"User not saved"});
+            } else {
+              res.json({success: true, msg:"User left the room"});
+            }
+          });
+        }
+
+      });
+    }
+
     roomAdmin(req, res) {
       Room.findOne({"name" : req.params.room}, (err, room) => {
 
