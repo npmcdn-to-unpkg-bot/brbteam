@@ -13,7 +13,10 @@
         name: req.body.name,
         privateRoom: req.body.privateRoom,
         admin: req.body.admin,
-        status: "Active"
+        status: "Active",
+        currTheme: "ambiance",
+        currLanguage: "javascript",
+        activeVideo: false
       });
 
       User.findOne({"username" :  req.body.admin}, (err, user) => {
@@ -162,6 +165,39 @@
         } else {
           res.status(200);
           res.json(room.interviewies);
+        }
+      });
+    }
+
+    updateRoom(req, res) {
+      Room.findOne({"name" : req.params.room}, (err, room) => {
+
+        if(err) {
+          res.json({success: false, msg:"Room not found"});
+        } else {
+          room.currLanguage = req.body.language;
+          room.currTheme = req.body.theme;
+          room.activeVideo = req.body.video;
+
+          room.save((err) => {
+            if(err) {
+              res.json({success: false, msg:"Room not saved"});
+            } else {
+              res.json({success: true, msg:"Room saved"});
+            }
+          });
+        }
+      });
+    }
+
+    getRoom(req, res) {
+      Room.findOne({"name" : req.params.room}, (err, room) => {
+
+        if(err) {
+          res.json({success: false, msg:"Room not found"});
+        } else {
+          res.status(200);
+          res.json(room);
         }
       });
     }

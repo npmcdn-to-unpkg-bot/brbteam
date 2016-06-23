@@ -32,6 +32,8 @@ router.put('/room/:room/join/:user', roomCtrl.joinRoom);
 router.get('/room/:room/admin', roomCtrl.roomAdmin);
 router.put('/room/:room/leave/:user', roomCtrl.leaveRoom);
 router.get('/room/:room/users', roomCtrl.usersInRoom);
+router.put('/room/:room/update', roomCtrl.updateRoom);
+router.get('/room/:room', roomCtrl.getRoom);
 
 router.get('/messages/:room', messageCtrl.messagesInRoom);
 

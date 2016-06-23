@@ -4,7 +4,7 @@
     angular.module('brbteam', ['ui.router', // Routing
     'oc.lazyLoad', // ocLazyLoad
     'ui.bootstrap', // Ui Bootstrap
-    'ui.codemirror', 'angular-jwt', 'ngStorage', 'btford.socket-io']);
+    'ui.codemirror', 'angular-jwt', 'ngStorage', 'btford.socket-io', 'ngAudio']);
 })();
 "use strict";
 
@@ -182,8 +182,17 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
     var leaveRoom = function leaveRoom(user, room) {
       return $http.put('/api/room/' + room + "/leave/" + user);
     };
+
     var usersInRoom = function usersInRoom(room) {
       return $http.get('/api/room/' + room + "/users");
+    };
+
+    var getRoom = function getRoom(room) {
+      return $http.get('/api/room/' + room);
+    };
+
+    var updateRoom = function updateRoom(room, data) {
+      return $http.put('/api/room/' + room + "/update", data);
     };
 
     var roomAdmin = function roomAdmin(room) {
@@ -221,6 +230,8 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
       closeRoom: closeRoom,
       joinRoom: joinRoom,
       leaveRoom: leaveRoom,
+      getRoom: getRoom,
+      updateRoom: updateRoom,
       usersInRoom: usersInRoom,
       roomAdmin: roomAdmin,
       executeCode: executeCode,
@@ -663,9 +674,9 @@ $(function () {
 
   angular.module('brbteam').controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope', 'ngAudio'];
 
-  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope, ngAudio) {
     var vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
@@ -674,11 +685,16 @@ $(function () {
     vm.isAdmin = false;
     vm.rtcSwitch = false;
     vm.users = [];
+    vm.openChat = false;
+    vm.unseenMsgs = 0;
 
     var editor = null;
 
     vm.languages = ["javascript", "ruby", "python", "php"];
     vm.selectedLang = "javascript";
+    vm.selectedTheme = "ambiance";
+
+    vm.msgSound = ngAudio.load("assets/msg2.mp3");
 
     ResourceService.activeRoom(vm.currentUser).success(function (response) {
       $log.info(response);
@@ -691,6 +707,11 @@ $(function () {
 
       connectToRoom();
       messagesLoad(vm.currRoomName);
+
+      ResourceService.getRoom(vm.currRoomName).success(function (response) {
+        vm.selectedLang = response.currLanguage;
+        vm.selectedTheme = response.currTheme;
+      });
 
       ResourceService.usersInRoom(vm.currRoomName).success(function (response) {
 
@@ -719,7 +740,7 @@ $(function () {
     // Data
     vm.editorOptions = {
       lineNumbers: true,
-      theme: 'ambiance',
+      theme: vm.selectedTheme,
       lineWrapping: true,
       height: 500,
       mode: 'ruby'
@@ -738,6 +759,7 @@ $(function () {
     vm.changeMode = changeMode;
     vm.runCode = runCode;
     vm.leaveRoom = leaveRoom;
+    vm.changeChatState = changeChatState;
 
     vm.enableCamera = function () {
       loadWebRtc();
@@ -772,7 +794,10 @@ $(function () {
 
     // parse received messages
     SocketService.on("msg", function (msg) {
-      $log.info(msg);
+      if (vm.openChat == false) {
+        vm.unseenMsgs++;
+      }
+      vm.msgSound.play();
       msg.state = "left";
       vm.messages.push(msg);
     });
@@ -813,6 +838,8 @@ $(function () {
 
     function changeTheme(theme) {
       editor.setOption('theme', theme);
+      vm.selectedTheme = theme;
+      updateRoom();
     }
 
     function changeMode() {
@@ -822,7 +849,7 @@ $(function () {
         mode = "clike";
       }
 
-      $log.info(mode);
+      updateRoom();
       editor.setOption('mode', mode);
     }
 
@@ -897,6 +924,22 @@ $(function () {
         }
       });
     };
+
+    function changeChatState() {
+      vm.openChat = !vm.openChat;
+      vm.unseenMsgs = 0;
+    }
+
+    function updateRoom() {
+      var room = {};
+      room.language = vm.selectedLang;
+      room.theme = vm.selectedTheme;
+      room.video = false;
+
+      ResourceService.updateRoom(vm.currRoomName, room).success(function (err) {
+        $log.info("Room updated");
+      });
+    }
 
     String.prototype.insertAt = function (index, string) {
       return this.substr(0, index) + string + this.substr(index);

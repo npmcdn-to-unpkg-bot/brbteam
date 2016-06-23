@@ -8,7 +8,10 @@
     privateRoom: {type: Boolean, required: true},
     admin: {type: String},
     interviewies: [{type: String}],
-    status: {type: String}
+    status: {type: String},
+    currLanguage: {type: String},
+    currTheme: {type: String},
+    activeVideo: {type: Boolean}
   });
 
   mongoose.model('Room', roomSchema);

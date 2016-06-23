@@ -1,1 +1,1 @@
-puts "Beso fegit"
+puts "put put"

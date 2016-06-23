@@ -3,9 +3,9 @@
   angular.module('brbteam')
          .controller('InterviewController', InterviewController);
 
-  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope'];
+  InterviewController.$inject = ['SocketService', '$state', 'RoomService', '$log', 'AuthService', 'ResourceService', '$scope', 'ngAudio'];
 
-  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope) {
+  function InterviewController(SocketService, $state, RoomService, $log, AuthService, ResourceService, $scope, ngAudio) {
     let vm = this;
 
     vm.currentUser = AuthService.currentUser().username;
@@ -14,11 +14,16 @@
     vm.isAdmin = false;
     vm.rtcSwitch = false;
     vm.users = [];
+    vm.openChat = false;
+    vm.unseenMsgs = 0;
 
     let editor = null;
 
     vm.languages = ["javascript", "ruby", "python", "php"];
     vm.selectedLang = "javascript";
+    vm.selectedTheme = "ambiance";
+
+    vm.msgSound = ngAudio.load("assets/msg2.mp3");
 
     ResourceService.activeRoom(vm.currentUser)
     .success((response) => {
@@ -32,6 +37,12 @@
 
       connectToRoom();
       messagesLoad(vm.currRoomName);
+
+      ResourceService.getRoom(vm.currRoomName)
+      .success((response) => {
+          vm.selectedLang = response.currLanguage;
+          vm.selectedTheme = response.currTheme;
+      });
 
       ResourceService.usersInRoom(vm.currRoomName)
       .success((response) => {
@@ -72,7 +83,7 @@
     // Data
     vm.editorOptions = {
       lineNumbers: true,
-      theme:'ambiance',
+      theme: vm.selectedTheme,
       lineWrapping : true,
        height: 500,
       mode : 'ruby'
@@ -91,6 +102,7 @@
     vm.changeMode = changeMode;
     vm.runCode = runCode;
     vm.leaveRoom = leaveRoom;
+    vm.changeChatState = changeChatState;
 
     vm.enableCamera = () => { loadWebRtc(); }
 
@@ -125,7 +137,10 @@
 
     // parse received messages
     SocketService.on("msg", (msg) => {
-      $log.info(msg);
+      if(vm.openChat == false) {
+        vm.unseenMsgs++;
+      }
+      vm.msgSound.play();
       msg.state = "left";
       vm.messages.push(msg);
     });
@@ -170,6 +185,8 @@
 
     function changeTheme(theme)  {
       editor.setOption('theme', theme);
+      vm.selectedTheme = theme;
+      updateRoom();
     }
 
     function changeMode() {
@@ -179,7 +196,7 @@
         mode = "clike";
       }
 
-      $log.info(mode);
+      updateRoom();
       editor.setOption('mode', mode);
     }
 
@@ -261,6 +278,24 @@
 
       });
     }
+
+    function changeChatState() {
+      vm.openChat = !vm.openChat;
+      vm.unseenMsgs = 0;
+    }
+
+    function updateRoom() {
+      let room = {};
+      room.language = vm.selectedLang;
+      room.theme = vm.selectedTheme;
+      room.video = false;
+
+      ResourceService.updateRoom(vm.currRoomName, room)
+      .success((err) => {
+        $log.info("Room updated");
+      });
+    }
+
 
 
   String.prototype.insertAt = function(index, string) {

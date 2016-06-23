@@ -8,6 +8,6 @@
         'angular-jwt',
         'ngStorage',
         'btford.socket-io',
-      //  'ngToast'
+        'ngAudio'
     ])
 })();

@@ -57,7 +57,7 @@
 
 
 
-<div class="small-chat-box ng-small-chat fadeInRight animated" ng-show="openChat" ng-if="vm.hasRoom">
+<div class="small-chat-box ng-small-chat fadeInRight animated" ng-show="vm.openChat" ng-if="vm.hasRoom">
 
     <div class="heading" draggable="true">
         <small class="chat-date pull-right">
@@ -94,9 +94,9 @@
     </div>
 
 </div>
-<div id="small-chat" ng-click="openChat = !openChat">
+<div id="small-chat" ng-model="vm.openChat" ng-click="vm.changeChatState()">
 
-    <span class="badge badge-warning pull-right">5</span>
+    <span class="badge badge-warning pull-right">{{ vm.unseenMsgs }}</span>
     <a class="open-small-chat">
         <i class="fa fa-comments"></i>
 
