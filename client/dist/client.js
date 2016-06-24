@@ -159,6 +159,7 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
   function ResourceService($http) {
 
     var questionApiUrl = "http://localhost:4000/api";
+    var codeApiUrl = "http://localhost:3000/api";
 
     // Questions
     var addQuestion = function addQuestion(data) {
@@ -206,7 +207,7 @@ angular.module('brbteam').config(config).run(function ($rootScope, $state, AuthS
     };
 
     var executeCode = function executeCode(data) {
-      return $http.post('/api/room/execute', data);
+      return $http.post(codeApiUrl + '/code/execute', data);
     };
 
     var getUser = function getUser(name) {
@@ -585,6 +586,47 @@ $(function () {
 'use strict';
 
 (function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log', 'toastr'];
+
+  function AuthController(AuthService, $log, toastr) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success, msg) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          toastr.error(msg, 'Error');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success, msg) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          toastr.error(msg, 'Error');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -629,47 +671,6 @@ $(function () {
         $state.go('index.myroom');
       }).error(function (response) {
         $log.info("Error joining room");
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log', 'toastr'];
-
-  function AuthController(AuthService, $log, toastr) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success, msg) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          toastr.error(msg, 'Error');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success, msg) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          toastr.error(msg, 'Error');
-        }
       });
     }
   }

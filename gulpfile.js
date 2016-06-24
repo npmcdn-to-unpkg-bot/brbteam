@@ -5,10 +5,9 @@ var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 var inject = require('gulp-inject');
 var mainBowerFiles = require('gulp-main-bower-files');
+var shell = require('gulp-shell');
+var exec = require('child_process').exec;
 
-gulp.task('start', function () {
-
-});
 
 gulp.task('inject', function() {
 	var target = gulp.src('client/index.html');
@@ -32,3 +31,14 @@ gulp.task('default', function() {
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('client/dist'));
 });
+
+gulp.task('run', ['default'], shell.task([
+	'npm start',
+]
+));
+
+// gulp.task('run-all', ['run'], function(){
+//
+// 	exec("echo hello");
+//
+// });

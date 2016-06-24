@@ -1,0 +1,20 @@
+{
+  "name": "code_service",
+  "version": "1.0.0",
+  "description": "Executing code sent by the user",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node --presets es2015 ./server.js"
+  },
+  "dependencies": {
+    "babel-cli": "^6.0.0",
+    "babel-preset-es2015": "^6.0.0",
+    "body-parser": "^1.15.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "shortid": "^2.2.6"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -9,6 +9,7 @@
   function ResourceService($http) {
 
     const questionApiUrl = "http://localhost:4000/api";
+    const codeApiUrl = "http://localhost:3000/api";
 
     // Questions
     let addQuestion = (data) => {
@@ -56,7 +57,7 @@
     }
 
     let executeCode = (data) => {
-      return $http.post('/api/room/execute', data);
+      return $http.post(codeApiUrl  + '/code/execute', data);
     }
 
     let getUser = (name) => {

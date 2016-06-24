@@ -37,6 +37,4 @@ router.get('/room/:room', roomCtrl.getRoom);
 
 router.get('/messages/:room', messageCtrl.messagesInRoom);
 
-router.post('/room/execute', roomCtrl.executeCode);
-
 module.exports = router;
