@@ -9,7 +9,7 @@
         'ngStorage',
         'btford.socket-io',
         'ngAudio',
-      //  'ngAnimate',
+        'ui.select',
         'toastr'
     ])
 })();

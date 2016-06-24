@@ -19,6 +19,7 @@
     "ngstorage": "^0.3.10",
     "angular-socket-io": "^0.7.0",
     "ngToast": "ngtoast#^2.0.0",
-    "angular-audio": "^1.7.2"
+    "angular-audio": "^1.7.2",
+    "angular-ui-select": "^0.18.0"
   }
 }

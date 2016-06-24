@@ -20,9 +20,7 @@
   router.post('/questions', (req, res) => {
     let tags =  req.body.tags;
 
-    let tagArr = tags.split(' ');
-
-    questions.getQuestions(tagArr, req, res);
+    questions.getQuestions(tags, req, res);
 
   });
 

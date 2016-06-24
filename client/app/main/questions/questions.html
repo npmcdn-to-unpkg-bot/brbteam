@@ -21,10 +21,20 @@
                                  <input type="text"  ng-model="vm.form.question" placeholder="Questions" class="form-control">
                                </div>
                                <div class="form-group">
-                                 <input type="selection" ng-model="vm.form.tag" placeholder="type" class="form-control">
+
+                                 <div class="input-group"><input type="text" ng-model="vm.newTag" class="form-control"> <span
+                                        class="input-group-btn"> <button type="button" ng-click="vm.addTag()" class="btn btn-primary">Add tag
+                                </button> </span></div>
                                </div>
+
+                               <div>
+                                  <span ng-repeat="tag in vm.addedTags" class="label label-default">{{ tag }}</span>
+                               </div>
+
+                               <br />
+
                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" ng-click="vm.addQuestion()" type="button">
-                                 <strong>Create</strong>
+                                 <strong>Submit question</strong>
                                </button>
                            </div>
                         </div>
@@ -37,13 +47,27 @@
 
                      <div>
 
-                         <div class="form-group">
-                           <input type="selection" ng-model="vm.search.tags" placeholder="type" class="form-control">
-                         </div>
-                         <button class="btn btn-sm btn-primary pull-right m-t-n-xs" ng-click="vm.searchQuestion()" type="button">
-                           <strong>Create</strong>
-                         </button>
-                     </div>
+
+                         <div class="input-group"><input type="text" ng-model="vm.newSearchTag" class="form-control">
+                           <span class="input-group-btn">
+                             <button type="button" ng-click="vm.addSearchTag()" class="btn btn-primary">Add tags</button>
+                           </span>
+                        </div>
+
+                        <div>
+                           <span ng-repeat="tag in vm.addedSearchTags" class="label label-default">{{ tag }}</span>
+                        </div>
+
+                        <br />
+                        <br />
+                        <br />
+
+                        <button class="btn btn-sm btn-primary pull-right m-t-n-xs" ng-click="vm.searchQuestion()" type="button">
+                          <strong>Search tags</strong>
+                        </button>
+
+                       </div>
+
                   </div>
 
                 </div>
@@ -56,7 +80,7 @@
                       <ul class="todo-list m-t">
                         <li ng-repeat="q in vm.foundQuestions">
                             <span class="m-l-xs">{{ q }}</span>
-                            <small class="label label-primary"><i class="fa fa-clock-o"></i> {{ vm.search.tags }}</small>
+                            <!-- <small class="label label-primary"><i class="fa fa-clock-o"></i> {{ vm.searchedTags }}</small> -->
                         </li>
                       </ul>
 

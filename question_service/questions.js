@@ -23,19 +23,22 @@
           this.generateTagsDsl(tags) +
         "}" +
         "then {" +
-          "out.matchedQuestions.push('" + question + "');" +
+          "out.matchedQuestions.push('" + question + "');\n" +
+          "out.matchedTags.push('" + tags[0] + "');" +
         "}}\n";
 
-      fs.appendFile(this.ruleFilePath, questionDsl);
+      fs.appendFile(this.ruleFilePath, questionDsl, () => {
+        nools.deleteFlows();
+        this.setup();
+      });
 
-      nools.deleteFlows();
-      this.setup();
     }
 
     getQuestions(tags, req, res) {
 
       let questions = [];
-      let currQuestion = new this.Questions(tags, questions);
+      let matchedTags = [];
+      let currQuestion = new this.Questions(tags, questions, matchedTags);
 
       this.session.assert(currQuestion);
 
@@ -43,6 +46,7 @@
         if(err) {
           console.log(err.stack);
         } else {
+          console.log(matchedTags);
           res.status(200);
           res.json(questions);
         }

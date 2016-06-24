@@ -1,1 +1,1 @@
-puts 'you can merge now'
+puts "kita"
