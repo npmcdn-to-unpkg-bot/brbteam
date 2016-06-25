@@ -8,6 +8,10 @@
         console.log(msg);
         socket.broadcast.to(msg.room).emit('type', msg);
       });
+
+      socket.on('consolemsg', (msg) => {
+        socket.broadcast.to(msg.room).emit('getconsolemsg', msg);
+      });
     });
 
   }

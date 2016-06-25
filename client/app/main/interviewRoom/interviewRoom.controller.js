@@ -161,6 +161,10 @@
       }
     });
 
+    SocketService.on('getconsolemsg', (msg) => {
+      vm.consoleMessages.push(msg.data);
+    });
+
     // We are getting what the user typed into the code editor
     SocketService.on("type", (msg) => {
 
@@ -243,7 +247,11 @@
 
         ResourceService.executeCode(data)
         .success((response) => {
+          let msg = {};
+          msg.room = vm.currRoomName;
+          msg.data = response.stdout;
           vm.consoleMessages.push(response.stdout);
+          SocketService.emit('consolemsg', msg);
         });
 
     }
