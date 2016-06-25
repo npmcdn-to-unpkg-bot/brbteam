@@ -1,1 +1,3 @@
-puts "kek"
+100.times do
+  puts 'hello'
+  end

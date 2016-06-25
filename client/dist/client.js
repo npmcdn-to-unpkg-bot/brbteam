@@ -584,6 +584,47 @@ $(function () {
 'use strict';
 
 (function () {
+
+  angular.module('brbteam').controller('AuthController', AuthController);
+
+  AuthController.$inject = ['AuthService', '$log', 'toastr'];
+
+  function AuthController(AuthService, $log, toastr) {
+    var vm = this;
+
+    // Data
+    vm.signupData = {};
+    vm.loginData = {};
+
+    // Functions
+    vm.login = login;
+    vm.signup = signup;
+
+    function login() {
+      AuthService.login(vm.loginData, function (success, msg) {
+        if (success) {
+          $log.info('Succesfull login');
+        } else {
+          toastr.error(msg, 'Error');
+        }
+      });
+    }
+
+    function signup() {
+
+      AuthService.signup(vm.signupData, function (success, msg) {
+        if (success) {
+          $log.info('Succesfull signup');
+        } else {
+          toastr.error(msg, 'Error');
+        }
+      });
+    }
+  }
+})();
+'use strict';
+
+(function () {
   angular.module('brbteam').controller('HomeController', HomeController);
 
   HomeController.$inject = ['ResourceService', '$log', '$state', 'RoomService', 'AuthService'];
@@ -628,47 +669,6 @@ $(function () {
         $state.go('index.myroom');
       }).error(function (response) {
         $log.info("Error joining room");
-      });
-    }
-  }
-})();
-'use strict';
-
-(function () {
-
-  angular.module('brbteam').controller('AuthController', AuthController);
-
-  AuthController.$inject = ['AuthService', '$log', 'toastr'];
-
-  function AuthController(AuthService, $log, toastr) {
-    var vm = this;
-
-    // Data
-    vm.signupData = {};
-    vm.loginData = {};
-
-    // Functions
-    vm.login = login;
-    vm.signup = signup;
-
-    function login() {
-      AuthService.login(vm.loginData, function (success, msg) {
-        if (success) {
-          $log.info('Succesfull login');
-        } else {
-          toastr.error(msg, 'Error');
-        }
-      });
-    }
-
-    function signup() {
-
-      AuthService.signup(vm.signupData, function (success, msg) {
-        if (success) {
-          $log.info('Succesfull signup');
-        } else {
-          toastr.error(msg, 'Error');
-        }
       });
     }
   }
@@ -826,6 +826,10 @@ $(function () {
       vm.consoleMessages.push(msg.data);
     });
 
+    SocketService.on('change_mode', function (msg) {
+      vm.selectedLang = msg.mode;
+    });
+
     // We are getting what the user typed into the code editor
     SocketService.on("type", function (msg) {
 
@@ -860,6 +864,12 @@ $(function () {
 
       updateRoom();
       editor.setOption('mode', mode);
+
+      var msg = {};
+      msg.room = vm.currRoomName;
+      msg.mode = mode;
+
+      SocketService.emit('mode_changed', msg);
     }
 
     function leaveRoom() {

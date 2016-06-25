@@ -165,6 +165,10 @@
       vm.consoleMessages.push(msg.data);
     });
 
+    SocketService.on('change_mode', (msg) => {
+      vm.selectedLang = msg.mode;
+    });
+
     // We are getting what the user typed into the code editor
     SocketService.on("type", (msg) => {
 
@@ -202,6 +206,12 @@
 
       updateRoom();
       editor.setOption('mode', mode);
+
+      let msg = {};
+      msg.room = vm.currRoomName;
+      msg.mode = mode;
+
+      SocketService.emit('mode_changed', msg);
     }
 
     function leaveRoom() {

@@ -12,6 +12,10 @@
       socket.on('consolemsg', (msg) => {
         socket.broadcast.to(msg.room).emit('getconsolemsg', msg);
       });
+
+      socket.on('mode_changed', (msg) => {
+        socket.broadcast.to(msg.room).emit('change_mode', msg);
+      });
     });
 
   }
